@@ -97,7 +97,7 @@ namespace Meowth.Esentery.Core
         public ICollection<Column> GetColumns()
         {
             return Api.GetTableColumns(CurrentSession, this).Select(
-                c => new Column(this, c.Name,
+                c => new Column(this, c.Name, typeof(string),
                                 new ColumnOptions(
                                     new JET_COLUMNDEF()), c.Columnid)).ToArray();
         }

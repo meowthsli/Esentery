@@ -43,15 +43,4 @@ namespace Meowth.Esentery
 
         internal THandle JetHandle;
     }
-
-    /// <summary>  </summary>
-    internal interface IHasJetHandle<T>
-    {
-        T Handle { get; }
-    }
-
-    internal interface ISessionObject
-    {
-        Session CurrentSession { get; }
-    }
 }

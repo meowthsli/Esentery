@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Meowth.Esentery.Core;
 using Microsoft.Isam.Esent.Interop;
 using Enumerable = System.Linq.Enumerable;
@@ -68,73 +67,5 @@ namespace Meowth.Esentery.Querying
         public bool InclusiveFrom { get; private set; }
         public T ValueTo { get; private set; }
         public bool InclusiveTo { get; private set; }
-    }
-
-    /// <summary> All byte converters </summary>
-    /// <remarks> Переписать на LCG </remarks>
-    static class Converters
-    {
-        /// <summary> Converts value </summary>
-        public static byte[] Convert<T>(T value)
-        {
-            return GetConverter<T>()(value);
-        }
-        
-        /// <summary> Returns suitable converter </summary>
-        public static Func<T, byte[]> GetConverter<T>()
-        {
-            if (typeof(T) == typeof(string))
-                return x => ConvertFromString(x as string);
-            
-            if (typeof(T) == typeof(int))
-                return x => ConvertFromInt32((int) GetBoxed(x));
-
-            if (typeof(T) == typeof(uint))
-                return x => ConvertFromUInt32((uint)GetBoxed(x));
-
-            if (typeof(T) == typeof(long))
-                return x => ConvertFromInt64((long)GetBoxed(x));
-
-            if (typeof(T) == typeof(ulong))
-                return x => ConvertFromUInt64((ulong)GetBoxed(x));
-
-            throw new NotSupportedException("This type is not supported");
-        }
-
-        private static object GetBoxed<T>(T t)
-        {
-            object o = t;
-            return o;
-        }
-
-        /// <summary> From string </summary>
-        private static byte[] ConvertFromString(string value)
-        {
-            return value.ToCharArray().SelectMany(BitConverter.GetBytes).ToArray();
-        }
-
-        /// <summary> From string </summary>
-        private static byte[] ConvertFromInt32(int value)
-        {
-            return BitConverter.GetBytes(value);
-        }
-
-        /// <summary> From string </summary>
-        private static byte[] ConvertFromUInt32(uint value)
-        {
-            return BitConverter.GetBytes(value);
-        }
-
-        /// <summary> From string </summary>
-        private static byte[] ConvertFromInt64(long value)
-        {
-            return BitConverter.GetBytes(value);
-        }
-
-        /// <summary> From string </summary>
-        private static byte[] ConvertFromUInt64(ulong value)
-        {
-            return BitConverter.GetBytes(value);
-        }
     }
 }

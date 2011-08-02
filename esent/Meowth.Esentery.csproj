@@ -47,13 +47,16 @@
   <ItemGroup>
     <Compile Include="Core\Bookmark.cs" />
     <Compile Include="Core\Column.cs" />
+    <Compile Include="Core\ColumnOfT.cs" />
+    <Compile Include="Core\ColumnOptions.cs" />
+    <Compile Include="Core\IColumn.cs" />
     <Compile Include="Core\IIndex.cs" />
     <Compile Include="Core\INativeCursor.cs" />
     <Compile Include="Core\ISearchIndex.cs" />
     <Compile Include="Core\KeyOptions.cs" />
     <Compile Include="Core\Range.cs" />
     <Compile Include="Core\SingleColumnIndexOfT.cs" />
-    <Compile Include="Extension.cs" />
+    <Compile Include="Extensions\CursorExtension.cs" />
     <Compile Include="Core\ICursor.cs" />
     <Compile Include="Core\IReadonlyCursor.cs" />
     <Compile Include="Core\NativeCursor.cs" />
@@ -68,7 +71,12 @@
     <Compile Include="Core\Table.cs" />
     <Compile Include="Core\Transaction.cs" />
     <Compile Include="Core\Utils.cs" />
-    <Compile Include="HasJetHandleBaseOfT.cs" />
+    <Compile Include="Extensions\RangeExtensions.cs" />
+    <Compile Include="Extensions\RowModificationExtensions.cs" />
+    <Compile Include="HasJetHandleBase.cs" />
+    <Compile Include="IHasJetHandle.cs" />
+    <Compile Include="ISessionObject.cs" />
+    <Compile Include="Core\Converters.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Querying\And.cs" />
