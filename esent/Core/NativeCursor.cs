@@ -1,0 +1,147 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using Meowth.Esentery.Additions;
+using Meowth.Esentery.Querying;
+using Microsoft.Isam.Esent.Interop;
+
+namespace Meowth.Esentery.Core
+{
+    /// <summary> ESENT NativeCursor </summary>
+    /// <remarks> This cursor directly maps to ESENT internal cursor, so it reads data directly
+    /// by iterating thru Index without calculations. Can be used as bookmark source for
+    /// complex processing </remarks>
+    public sealed class NativeCursor<T> : HasJetHandleBase<JET_TABLEID>, ICursor, INativeCursor, IEnumerable<Bookmark>
+        where T : IComparable<T>
+    {
+        #region Construction & Disposing
+
+        /// <summary> Opens existing table </summary>
+        internal NativeCursor(Table table, SingleColumnIndex<T> singleColumnIndex)
+        {
+            Table = table;
+            SearchIndex = singleColumnIndex;
+
+            Api.JetDupCursor(CurrentSession, Table, out JetHandle, DupCursorGrbit.None);
+
+            var idx = (SearchIndex != null) ? SearchIndex.Name : null;
+            Api.JetSetCurrentIndex(CurrentSession, JetHandle, idx);
+
+            StepBack();
+        }
+
+        /// <summary> Disposes table </summary>
+        protected override void Dispose(bool dispose)
+        {
+            if (!CurrentSession.Disposed)
+                Api.JetCloseTable(CurrentSession, this);
+        }
+
+        public override Session CurrentSession
+        {
+            get { return Table.CurrentSession; }
+        }
+
+        #endregion
+
+        internal void StepBack()
+        {
+            Api.TryMovePrevious(CurrentSession, this);
+        }
+        
+        /// <summary> Table of this NativeCursor </summary>
+        public Table Table { get; private set; }
+
+        /// <summary> Index reference on this </summary>
+        public SingleColumnIndex<T> SearchIndex { get; private set; }
+
+        /// <summary> Appends row </summary>
+        public RowModification AddRow()
+        {
+            return new RowModification(Table, this, JET_prep.Insert);
+        }
+        
+        /// <summary> Returns string value </summary>
+        public string GetString(string columnName)
+        {
+            var colId = Api.GetColumnDictionary(CurrentSession, this)[columnName];
+            return Api.RetrieveColumnAsString(CurrentSession, this, colId, Encoding.Unicode);
+        }
+
+        /// <summary> Moved to next record </summary>
+        public bool MoveNext()
+        {
+            return Api.TryMoveNext(CurrentSession, this);
+        }
+
+        /// <summary>  </summary>
+        public IEnumerator<Bookmark> GetEnumerator()
+        {
+            while (MoveNext())
+                yield return new Bookmark(Api.GetBookmark(CurrentSession, this));
+        }
+
+        /// <summary> </summary>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        
+        /// <summary>  </summary>
+        public JET_TABLEID CursorHandle
+        {
+            get { return this; }
+        }
+
+        #region Milestones
+
+        /// <summary> Returns milestone of current position on index </summary>
+        public Milestone GetMilestone()
+        {
+            return new Milestone(SearchIndex, 
+                Api.RetrieveKey(CurrentSession, this, RetrieveKeyGrbit.None),
+                new KeyOptions()
+                );
+        }
+
+        /// <summary> Jumps to milestone on that index </summary>
+        public void GotoMilestone(Milestone ms)
+        {
+            Api.JetMakeKey(CurrentSession, this, ms.Data, ms.Data.Length, MakeKeyGrbit.NormalizedKey);
+        }
+
+        #endregion
+
+        /// <summary> Restricts range on equality of current </summary>
+        /// <param name="range"></param>
+        public void Restrict(Range<T> range)
+        {
+            range.Normalize();
+
+            // TODO: process cases with one-side restriction
+            var keyFrom = Converters.Convert(range.From);
+            Api.JetMakeKey(CurrentSession, this, keyFrom, keyFrom.Length, MakeKeyGrbit.NewKey);
+            
+            Api.TrySeek(CurrentSession, this, range.InclusiveFrom ? SeekGrbit.SeekGE : SeekGrbit.SeekGT);
+
+            var keyTo = Converters.Convert(range.From);
+            Api.JetMakeKey(CurrentSession, this, keyTo, keyTo.Length, MakeKeyGrbit.NewKey);
+            
+            Api.TrySetIndexRange(CurrentSession, this,
+                                 range.InclusiveTo
+                                     ? SetIndexRangeGrbit.RangeUpperLimit | SetIndexRangeGrbit.RangeInclusive
+                                     : SetIndexRangeGrbit.RangeUpperLimit);
+        }
+        
+        /// <summary> Returns count of records </summary>
+        public bool HasRecords()
+        {
+            var res = Api.TryMoveNext(CurrentSession, this); ;
+            if (res)
+                Api.TryMovePrevious(CurrentSession, this);
+
+            return res;
+        }
+    }
+}

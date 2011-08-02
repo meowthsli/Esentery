@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{70889122-D14B-4066-B915-36C8EF2EE726}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Meowth.Esentery</RootNamespace>
+    <AssemblyName>Meowth.Esentery</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Esent.Interop, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Esent.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\Bookmark.cs" />
+    <Compile Include="Core\Column.cs" />
+    <Compile Include="Core\IIndex.cs" />
+    <Compile Include="Core\INativeCursor.cs" />
+    <Compile Include="Core\ISearchIndex.cs" />
+    <Compile Include="Core\KeyOptions.cs" />
+    <Compile Include="Core\Range.cs" />
+    <Compile Include="Core\SingleColumnIndexOfT.cs" />
+    <Compile Include="Extension.cs" />
+    <Compile Include="Core\ICursor.cs" />
+    <Compile Include="Core\IReadonlyCursor.cs" />
+    <Compile Include="Core\NativeCursor.cs" />
+    <Compile Include="Core\Database.cs" />
+    <Compile Include="Core\Engine.cs" />
+    <Compile Include="Core\EngineOptions.cs" />
+    <Compile Include="Core\Milestone.cs" />
+    <Compile Include="Core\IndexOptions.cs" />
+    <Compile Include="Core\RowModification.cs" />
+    <Compile Include="Core\Session.cs" />
+    <Compile Include="Core\SynthesizedCursor.cs" />
+    <Compile Include="Core\Table.cs" />
+    <Compile Include="Core\Transaction.cs" />
+    <Compile Include="Core\Utils.cs" />
+    <Compile Include="HasJetHandleBaseOfT.cs" />
+    <Compile Include="TestRunner.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Querying\And.cs" />
+    <Compile Include="Querying\Between.cs" />
+    <Compile Include="Querying\ComplexPredicate.cs" />
+    <Compile Include="Querying\Eq.cs" />
+    <Compile Include="Querying\Or.cs" />
+    <Compile Include="Querying\Predicate.cs" />
+    <Compile Include="Querying\StartsWith.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Maintainance\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

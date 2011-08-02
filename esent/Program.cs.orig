@@ -1,0 +1,206 @@
+<<<<<<< local
+Ôªøusing System;
+using System.Diagnostics;
+=======
+using System;
+>>>>>>> other
+using Meowth.Esentery.Core;
+using Meowth.Esentery.Querying;
+using Microsoft.Isam.Esent.Interop;
+using Meowth.Esentery.Additions;
+<<<<<<< local
+using Transaction = Meowth.Esentery.Core.Transaction;
+=======
+using Session = Meowth.Esentery.Core.Session;
+>>>>>>> other
+
+namespace Meowth.Esentery.Test
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            using (var engine = new Engine("instance", new EngineOptions()))
+            {
+                using (var session = engine.OpenSession())
+                using (var db = session.CreateDatabase("edbtest.db"))
+                {
+                    Create(db);
+                }
+
+                using (var session = engine.OpenSession())
+                using (var db = session.OpenDatabase("edbtest.db"))
+                {
+                    Test(db);   
+                }
+            }
+        }
+
+        private static void Create(Database db)
+        {
+            const string TABLE = "table";
+            const string COLUMN = "column";
+            const string COLUMN2 = "column2";
+            const string COLUMN3 = "column3";
+            using (var tx = db.CurrentSession.BeginTransaction())
+            using (var table = db.CreateTable(TABLE))
+            {
+                table.AddColumn(COLUMN, new JET_COLUMNDEF {coltyp = JET_coltyp.LongText, cp = JET_CP.Unicode});
+                table.AddColumn(COLUMN2, new JET_COLUMNDEF {coltyp = JET_coltyp.LongText, cp = JET_CP.Unicode});
+                table.AddColumn(COLUMN3, new JET_COLUMNDEF {coltyp = JET_coltyp.LongText, cp = JET_CP.Unicode});
+                table.AddSearchIndex<string>(COLUMN, COLUMN);
+                table.AddSearchIndex<string>(COLUMN2, COLUMN2);
+                
+                tx.Commit();
+            }
+        }
+
+        static void Assert<T>(T left, T right)
+            where T : IEquatable<T>
+        {
+            if(!left.Equals(right))
+                throw new ArgumentException();
+        }
+
+        static void Test(Database db)
+        {
+            const string TABLE = "table";
+            const string COLUMN = "column";
+            const string COLUMN2 = "column2";
+            const string COLUMN3 = "column3";
+               
+            const string message2 = "‚˚‡˚‡‚‡˚‚‡";
+
+            using (var tx = db.CurrentSession.BeginTransaction())
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenPrimaryCursor())
+            {
+                const string message = "Hello world";
+                    
+                const string msg3 = "msg3";
+
+                using (var ins = cursor.AddRow())
+                {
+                    ins.SetStringField(COLUMN, message);
+                    ins.SetStringField(COLUMN2, message2);
+                    ins.SetStringField(COLUMN3, msg3);
+                    ins.Save();
+                }
+
+<<<<<<< local
+                Transaction tx2 = null;
+                using (tx2 = session.BeginTransaction())
+                using (var table = db.OpenTable(TABLE))
+                using (var cursor = table.OpenPrimaryCursor())
+=======
+                using (var ins = cursor.AddRow())
+>>>>>>> other
+                {
+<<<<<<< local
+                    var sw = new Stopwatch();
+                    sw.Start();
+
+                    var j = 0;
+                    for (var i = 0; i < 1000; ++i)
+                    {
+                        const string message = "Hello world";
+                        const string msg3 = "msg3";
+
+                        using (var ins = cursor.AddRow())
+                        {
+                            ins.SetStringField(COLUMN, message);
+                            ins.SetStringField(COLUMN2, message2);
+                            ins.SetStringField(COLUMN3, msg3);
+                            ins.Save();
+                        }
+
+                        if (++j % 200 == 0)
+                        {
+                            tx2.Commit();
+                            tx2 = session.BeginTransaction();
+                        }
+                    }
+                    tx2.Commit();
+                    sw.Stop();
+                    Console.WriteLine("Time is {0:N}", sw.Elapsed.TotalMilliseconds);
+=======
+                    ins.SetStringField(COLUMN, msg3);
+                    ins.SetStringField(COLUMN2, message2);
+                    ins.SetStringField(COLUMN3, msg3);
+                    ins.Save();
+>>>>>>> other
+                }
+<<<<<<< local
+
+                return;
+
+                Console.WriteLine(COLUMN + " : " + COLUMN2 + " : " + COLUMN3);
+=======
+                    
+                tx.Commit();
+            }
+>>>>>>> other
+
+            Console.WriteLine(COLUMN + " : " + COLUMN2 + " : " + COLUMN3);
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenPrimaryCursor())
+                while(cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " + cursor.GetString(COLUMN3));
+
+            Console.WriteLine("2.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(new Eq<string>(table.GetIndex<string>(COLUMN), "msg3")))
+            {
+                while (cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+            }
+
+            Console.WriteLine("1.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(new Eq<string>(table.GetIndex<string>(COLUMN2), message2)))
+            {
+                while (cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+            }
+
+            Console.WriteLine("2.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(new StartsWith(table.GetIndex<string>(COLUMN), "Hell")))
+                while (cursor.MoveNext())
+
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+
+            Console.WriteLine("1.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(
+                new And(
+                    new StartsWith(table.GetIndex<string>(COLUMN), "ms"),
+                    new Eq<string>(table.GetIndex<string>(COLUMN2), message2)
+                    )))
+                while (cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+
+            Console.WriteLine("1.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(
+                    new Between<string>(table.GetIndex<string>(COLUMN), 
+                        "zzzs", false, 
+                        "msg/", true)))
+                while (cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+
+            Console.WriteLine("1.........\n\n");
+        }
+    }
+}
