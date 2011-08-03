@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Meowth.Esentery.Core;
 using Meowth.Esentery.Querying;
 using Microsoft.Isam.Esent.Interop;
@@ -37,11 +38,15 @@ namespace Meowth.Esentery.Test
             using (var table = db.CreateTable(TABLE))
             {
                 var col1 = table.AddColumn<string>(COLUMN, 
-                    new ColumnOptions(new JET_COLUMNDEF { coltyp = JET_coltyp.LongText, cp = JET_CP.Unicode }));
-                var col2 = table.AddColumn<string>(COLUMN2, 
-                    new ColumnOptions(new JET_COLUMNDEF { coltyp = JET_coltyp.LongText, cp = JET_CP.Unicode }));
+                    new ColumnOptions { ColumnType = typeof(String), Encoding = Encoding.Unicode, Length = 200 });
+
+                var col2 = table.AddColumn<string>(COLUMN2,
+                    new ColumnOptions { ColumnType = typeof(String), Encoding = Encoding.Unicode, Length = 200 });
+
                 table.AddColumn<string>(COLUMN3, 
-                    new ColumnOptions(new JET_COLUMNDEF { coltyp = JET_coltyp.LongText, cp = JET_CP.Unicode }));
+                    new ColumnOptions { ColumnType= typeof(String), Encoding = Encoding.Unicode, Length = 200 });
+
+                table.AddColumn<int>("int_columns", new ColumnOptions { ColumnType = typeof(int), IsNullable = false});
                 table.AddSearchIndex(COLUMN, col1);
                 table.AddSearchIndex(COLUMN2, col2);
 

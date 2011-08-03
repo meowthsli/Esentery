@@ -17,15 +17,14 @@ namespace Meowth.Esentery.Core
 
         /// <summary> Column </summary>
         internal Column(Table table, 
-            string columnName, Type columnType, 
+            string columnName,
             ColumnOptions options, 
             JET_COLUMNID handle)
         {
-            Converters.AssertType(columnType);
 
             Table = table;
             ColumnName = columnName;
-            ColumnType = columnType;
+            ColumnType = options.ColumnType;
             Options = options;
             Handle = handle;
         }

@@ -13,7 +13,8 @@ namespace Meowth.Esentery.Core
         public Column<T> AddColumn<T>(string columnName, ColumnOptions options)
         {
             JET_COLUMNID column;
-            Api.JetAddColumn(CurrentSession, this, columnName, options.ColumnDef, null, 0, out column);
+            
+            Api.JetAddColumn(CurrentSession, this, columnName, options.GetColumnDef(), null, 0, out column);
             var newColumns = new Column<T>(this, columnName, options, column);
             _columns.Add(newColumns);
             return newColumns;
@@ -118,7 +119,8 @@ namespace Meowth.Esentery.Core
         /// <summary> Loads columns of table </summary>
         private void LoadColumns()
         {
-            foreach(var c in Api.GetTableColumns(CurrentSession, this).Select(c => new Column(this, c.Name, typeof(string),new ColumnOptions(new JET_COLUMNDEF()), c.Columnid)))
+            foreach(var c in Api.GetTableColumns(CurrentSession, this)
+                .Select(c => new Column(this, c.Name, ColumnOptions.CreateFrom(c), c.Columnid)))
                 _columns.Add(c);
         }
 
