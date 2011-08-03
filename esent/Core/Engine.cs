@@ -11,11 +11,7 @@ namespace Meowth.Esentery.Core
         {
             if (string.IsNullOrEmpty(engineInstanceName))
                 engineInstanceName = "default";
-
-            // Initialize ESENT. Setting JET_param.CircularLog to 1 means ESENT will automatically
-            // delete unneeded logfiles. JetInit will inspect the logfiles to see if the last
-            // shutdown was clean. If it wasn't (e.g. the application crashed) recovery will be
-            // run automatically bringing the database to a consistent state.
+            
             Api.JetCreateInstance(out JetHandle, engineInstanceName);
             Api.JetSetSystemParameter(this, JET_SESID.Nil, JET_param.CircularLog, 1, null);
             Api.JetInit(ref JetHandle);
@@ -33,6 +29,7 @@ namespace Meowth.Esentery.Core
             Api.JetTerm(this);
         }
 
+        /// <summary> Session is not available on engine </summary>
         public override Session CurrentSession
         {
             get { throw new NotSupportedException(); }

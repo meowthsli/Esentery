@@ -5,7 +5,7 @@ namespace Meowth.Esentery.Core
     /// <summary> Natural cursor </summary>
     internal interface INativeCursor
     {
-        /// <summary> </summary>
+        /// <summary> We need to use cursor handle </summary>
         JET_TABLEID CursorHandle { get; }
     }
 }

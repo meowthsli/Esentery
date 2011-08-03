@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using Meowth.Esentery.Core;
 using Meowth.Esentery.Querying;
-using Microsoft.Isam.Esent.Interop;
-using Meowth.Esentery.Additions;
-using Session = Meowth.Esentery.Core.Session;
+using Meowth.Esentery.Extensions;
 
 namespace Meowth.Esentery.Test
 {
@@ -47,19 +44,13 @@ namespace Meowth.Esentery.Test
                 table.AddColumn<string>(COLUMN3, 
                     new ColumnOptions { Encoding = Encoding.Unicode, Length = 200 });
 
-                table.AddColumn<int>("int_columns", new ColumnOptions { ColumnType = typeof(int), IsNullable = false});
+                var col4 = table.AddColumn<int>("int_column", new ColumnOptions { ColumnType = typeof(int), IsNullable = false});
                 table.AddSearchIndex(COLUMN, col1);
                 table.AddSearchIndex(COLUMN2, col2);
+                table.AddSearchIndex("int_idx", col4);
 
                 tx.Commit();
             }
-        }
-
-        static void Assert<T>(T left, T right)
-            where T : IEquatable<T>
-        {
-            if (!left.Equals(right))
-                throw new ArgumentException();
         }
 
         static void Test(Database db)
@@ -68,6 +59,7 @@ namespace Meowth.Esentery.Test
             const string COLUMN = "column";
             const string COLUMN2 = "column2";
             const string COLUMN3 = "column3";
+            const string COLUMN4 = "int_column";
 
             const string message2 = "выаыаваыва";
 
@@ -78,15 +70,17 @@ namespace Meowth.Esentery.Test
                 const string message = "Hello world";
                 const string msg3 = "msg3";
 
-                var column1 = (Column<string>)table.GetColumns().First(x => x.ColumnName == COLUMN);
-                var column2 = (Column<string>)table.GetColumns().First(x => x.ColumnName == COLUMN2);
-                var column3 = (Column<string>)table.GetColumns().First(x => x.ColumnName == COLUMN3);
+                var column1 = table.GetColumn<string>(COLUMN);
+                var column2 = table.GetColumn<string>(COLUMN2);
+                var column3 = table.GetColumn<string>(COLUMN3);
+                var column4 = table.GetColumn<int>(COLUMN4);
 
                 using (var ins = cursor.AddRow())
                 {
                     ins.SetField(column1, message);
                     ins.SetField(column2, message2);
                     ins.SetField(column3, msg3);
+                    ins.SetField(column4, "sdfsfsd");
                     ins.Save();
                 }
 
@@ -145,6 +139,17 @@ namespace Meowth.Esentery.Test
                     new StartsWith(table.GetIndex<string>(COLUMN), "ms"),
                     new Eq<string>(table.GetIndex<string>(COLUMN2), message2)
                     )))
+                while (cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+
+            Console.WriteLine("1.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(
+                    new Between<string>(table.GetIndex<string>(COLUMN),
+                        "zzzs", false,
+                        "msg/", true)))
                 while (cursor.MoveNext())
                     Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
                                         cursor.GetString(COLUMN3));

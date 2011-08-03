@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Meowth.Esentery.Querying;
 using Microsoft.Isam.Esent.Interop;
 
 namespace Meowth.Esentery.Core
@@ -12,10 +13,10 @@ namespace Meowth.Esentery.Core
         {
             Table = table;
             Cursor = cursor;
-            Api.JetPrepareUpdate(Session, cursor, preparationType);
+            Api.JetPrepareUpdate(CurrentSession, cursor, preparationType);
         }
 
-        private HasJetHandleBase<JET_TABLEID> Cursor { get; set; }
+        internal HasJetHandleBase<JET_TABLEID> Cursor { get; set; }
        
         /// <summary> Owner </summary>
         public Table Table { get; private set; }
@@ -23,23 +24,22 @@ namespace Meowth.Esentery.Core
         /// <summary> Saving </summary>
         public void Save()
         {
-            Api.JetUpdate(Session, Cursor);
+            Api.JetUpdate(CurrentSession, Cursor);
         }
 
-        /// <summary> Fills field with value </summary>
-        public void SetField<T>(Column<T> column, string value)
+        /// <summary> Field set up without types </summary>
+        public void SetField(Column column, object value)
         {
-            Api.SetColumn(Session, Cursor, column.Handle, value, Encoding.Unicode);
-        }
+            if(column.ColumnType != value.GetType())
+                throw new ArgumentException("Column has another type");
 
-        internal void SetField(Column column, string value)
-        {
-            // Conversion to value and set up
-            Api.SetColumn(Session, Cursor, column.Handle, value, Encoding.Unicode);
+            var data = Converters.Convert(column.ColumnType, value);
+            Api.JetSetColumn(CurrentSession, Cursor, column.Handle, data, data.Length, SetColumnGrbit.None, 
+                new JET_SETINFO());
         }
 
         public void Dispose() { }
 
-        private Session Session { get { return Table.Database.CurrentSession; } }
+        public Session CurrentSession { get { return Table.Database.CurrentSession; } }
     }
 }

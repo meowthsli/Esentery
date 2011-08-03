@@ -33,7 +33,7 @@ namespace Meowth.Esentery.Core
 
         #endregion
 
-        // TODO:
+        /// <summary> Handle of </summary>
         public JET_INDEXID Handle { get; private set; }
     }
 

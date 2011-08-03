@@ -66,14 +66,20 @@ namespace Meowth.Esentery.Querying
         /// <summary> Converts value to sequence of bytes </summary>
         public static byte[] Convert<T>(T value)
         {
-            return GetConverter<T>()(value);
+            return GetConverter(typeof(T))(value);
+        }
+
+        /// <summary> Converts value to sequence of bytes </summary>
+        public static byte[] Convert(Type t, object value)
+        {
+            return GetConverter(t)(value);
         }
         
         /// <summary> Returns suitable converter </summary>
-        public static Func<T, byte[]> GetConverter<T>()
+        private static Func<object, byte[]> GetConverter(Type t)
         {
-            if (s_convertersToByteArray.ContainsKey(typeof(T)))
-                return x => s_convertersToByteArray[typeof(T)](x);
+            if (s_convertersToByteArray.ContainsKey(t))
+                return x => s_convertersToByteArray[t](x);
 
             throw new NotSupportedException("Dont' know how to convert this type to byte sequence");
         }

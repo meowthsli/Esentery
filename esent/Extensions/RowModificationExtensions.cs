@@ -1,15 +1,16 @@
-using System.Linq;
 using Meowth.Esentery.Core;
+using Microsoft.Isam.Esent.Interop;
 
-namespace Meowth.Esentery.Additions
+namespace Meowth.Esentery.Extensions
 {
+    /// <summary> Extensions </summary>
     public static class RowModificationExtensions
     {
-        ///// <summary> Sets up string </summary>
-        //public static void SetString(this RowModification mod, string colName, string value)
-        //{
-        //    var cols = mod.Table.GetColumns().ToDictionary(c => c.ColumnName, c => c);
-        //    mod.SetField(cols[colName],  value);
-        //}
+        /// <summary> Fills field with typed value </summary>
+        public static void SetField<T>(this RowModification rowModification, Column<T> column, string value)
+        {
+            Api.SetColumn(rowModification.CurrentSession, rowModification.Cursor, column.Handle, value, 
+                column.Options.Encoding);
+        }
     }
 }

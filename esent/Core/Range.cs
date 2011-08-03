@@ -11,7 +11,6 @@ namespace Meowth.Esentery.Core
         public T To { get; internal set; }
         public bool HasTo { get; internal set; }
 
-
         public bool InclusiveFrom { get; internal set; }
         public bool InclusiveTo { get; internal set; }
 
