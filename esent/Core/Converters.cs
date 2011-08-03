@@ -10,13 +10,16 @@ namespace Meowth.Esentery.Querying
     /// <remarks> Переписать на LCG </remarks>
     static class Converters
     {
-        /// <summary> Checks type for validity in usage </summary>
-        public static bool IsValidEsentType(Type type)
+        /// <summary> Checks the type is valid </summary>
+        public static void AssertType(Type type)
         {
-            return s_validEsentTypes.Contains(type);
+            if (!s_validEsentTypes.Contains(type))
+                throw new ArgumentException(
+                    string.Format("Type '{0}' is not supported. Valid types are {1}", type, TypesList));
+
         }
 
-        public static Type GetCLRType(JET_coltyp jct)
+        public static Type GetCLRType(JET_COLUMNDEF columndef)
         {
             throw new NotImplementedException();
         }
@@ -61,7 +64,10 @@ namespace Meowth.Esentery.Querying
                       typeof(Guid)
                   };
 
-        private static readonly Dictionary<JET_coltyp, Type> s_convertersJetTypeToClrType
+        /// <summary> Списо тип </summary>
+        private static readonly string TypesList = string.Join(",", s_validEsentTypes.Select(s => s.Name).ToArray());
+
+        private static readonly Dictionary<JET_coltyp, Type> ConvertersJetTypeToClrType
             = new Dictionary<JET_coltyp, Type>
                   {
                       {JET_coltyp.Bit, typeof(bool)},

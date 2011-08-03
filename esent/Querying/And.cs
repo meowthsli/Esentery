@@ -34,7 +34,7 @@ namespace Meowth.Esentery.Querying
                         cursors.Select(s => s.CursorHandle).ToArray())
                         .Select(k => new Bookmark(k)).ToList();
                 }
-                catch(EsentNoCurrentRecordException ex)
+                catch(EsentNoCurrentRecordException)
                 {
                     return Enumerable.Empty<Bookmark>();
                 }

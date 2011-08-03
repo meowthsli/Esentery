@@ -9,76 +9,94 @@ namespace Meowth.Esentery.Core
     /// <summary> ESENT Table (DML) </summary>
     public class Table : HasJetHandleBase<JET_TABLEID>
     {
-        /// <summary> Creates table from scratch </summary>
-        internal Table(Database db, string tableName, JET_TABLEID handle)
-        {
-            Database = db;
-            TableName = tableName;
-            JetHandle = handle;
-        }
-
-        /// <summary> Table creation </summary>
-        internal static Table Create(Database db, string tableName)
-        {
-            JET_TABLEID handle;
-            Api.JetCreateTable(db.CurrentSession, db, tableName, 0, 100, out handle);
-            return new Table(db, tableName, handle);
-        }
-
-        internal static Table Open(Database db, string tableName)
-        {
-            JET_TABLEID handle;
-            Api.JetOpenTable(db.CurrentSession, db, tableName, new byte[] { 0 }, 0, OpenTableGrbit.None, out handle);
-            return new Table(db, tableName, handle);
-        }
-
-        protected override void Dispose(bool dispose)
-        {
-            if (!Database.CurrentSession.Disposed)
-            {
-                Api.JetCloseTable(CurrentSession, this);
-            }
-        }
-
-        public override Session CurrentSession
-        {
-            get { return Database.CurrentSession; }
-        }
-
         /// <summary> Creates column </summary>
         public Column<T> AddColumn<T>(string columnName, ColumnOptions options)
         {
             JET_COLUMNID column;
             Api.JetAddColumn(CurrentSession, this, columnName, options.ColumnDef, null, 0, out column);
-            return new Column<T>(this, columnName, options, column);
+            var newColumns = new Column<T>(this, columnName, options, column);
+            _columns.Add(newColumns);
+            return newColumns;
         }
 
         /// <summary> Creates Index </summary>
         public SingleColumnIndex<T> AddSearchIndex<T>(string indexName, Column<T> column)
             where T : IComparable<T>
         {
-            if(column.Table != this)
+            if (column.Table != this)
                 throw new ArgumentException("Column doesn't belong to this table");
 
-            return SingleColumnIndex<T>.CreateSingleColumnIndex(this, indexName, column);
-        }
-        
-        public NativeCursor<T> OpenNativeCursor<T>(SingleColumnIndex<T> singleColumnIndex)
-            where T : IComparable<T>
-        {
-            return new NativeCursor<T>(this, singleColumnIndex);
+            if(_indexes.Any(i => i.Column == column))
+                throw new ArgumentException("Index on specified column already exists");
+
+            var idx = SingleColumnIndex<T>.CreateSingleColumnIndex(this, indexName, column);
+            _indexes.Add(idx);
+            return idx;
         }
 
+        /// <summary> Opens cursor for the table </summary>
         public ICursor OpenCursor(Predicate predicate)
         {
             return predicate.GetCursor(this);
         }
 
+        /// <summary> Returns index by name </summary>
         public SingleColumnIndex<T> GetIndex<T>(string indexName)
             where T : IComparable<T>
         {
             // TODO: actuall return real index
             return new SingleColumnIndex<T>(this, indexName, null);
+        }
+        
+        /// <summary> Returns copy of column list </summary>
+        public ICollection<Column> GetColumns()
+        {
+            return new List<Column>(_columns);
+        }
+        
+        /// <summary> Current database </summary>
+        public Database Database { get; private set; }
+
+        /// <summary> Name of table </summary>
+        public string TableName { get; private set; }
+
+        /// <summary> Reference to current session </summary>
+        public override Session CurrentSession { get { return Database.CurrentSession; }}
+
+        /// <summary> Creates table object over handle </summary>
+        internal Table(Database db, string tableName, JET_TABLEID handle, bool initial = false)
+        {
+            Database = db;
+            TableName = tableName;
+            JetHandle = handle;
+            if (initial)
+            {
+                LoadColumns();
+                LoadIndexes();
+            }
+        }
+
+        /// <summary> Creates new table </summary>
+        internal static Table Create(Database db, string tableName)
+        {
+            JET_TABLEID handle;
+            Api.JetCreateTable(db.CurrentSession, db, tableName, 0, 100, out handle);
+            return new Table(db, tableName, handle, true);
+        }
+
+        /// <summary> Opens existing table </summary>
+        internal static Table Open(Database db, string tableName)
+        {
+            JET_TABLEID handle;
+            Api.JetOpenTable(db.CurrentSession, db, tableName, new byte[] { 0 }, 0, OpenTableGrbit.None, out handle);
+            return new Table(db, tableName, handle, true);
+        }
+
+        /// <summary> Opens native cursor over this table </summary>
+        internal NativeCursor<T> OpenNativeCursor<T>(SingleColumnIndex<T> singleColumnIndex)
+            where T : IComparable<T>
+        {
+            return new NativeCursor<T>(this, singleColumnIndex);
         }
 
         /// <summary> Returns column id </summary>
@@ -89,17 +107,35 @@ namespace Meowth.Esentery.Core
                 .Handle;
         }
 
-        public Database Database { get; private set;}
-        public string TableName { get; set; }
-
-        /// <summary> Column list </summary>
-        /// TODO: sync with database and refresh cache as needed
-        public ICollection<Column> GetColumns()
+        /// <summary> Disposition </summary>
+        protected override void Dispose(bool dispose)
         {
-            return Api.GetTableColumns(CurrentSession, this).Select(
-                c => new Column(this, c.Name, typeof(string),
-                                new ColumnOptions(
-                                    new JET_COLUMNDEF()), c.Columnid)).ToArray();
+            if (!Database.CurrentSession.Disposed)
+                Api.JetCloseTable(CurrentSession, this);
+
         }
+        
+        /// <summary> Loads columns of table </summary>
+        private void LoadColumns()
+        {
+            foreach(var c in Api.GetTableColumns(CurrentSession, this).Select(c => new Column(this, c.Name, typeof(string),new ColumnOptions(new JET_COLUMNDEF()), c.Columnid)))
+                _columns.Add(c);
+        }
+
+        /// <summary> Loads columns of table </summary>
+        private void LoadIndexes()
+        {
+            foreach (var ix in Api.GetTableIndexes(CurrentSession, this)
+                .Select(idx => new SingleColumnIndex(this,
+                    idx.Name,
+                    _columns.First(c => c.ColumnName == idx.IndexSegments[0].ColumnName))))
+                _indexes.Add(ix);
+            
+        }
+
+        /// <summary> Columns cache </summary>
+        private readonly ICollection<Column> _columns = new List<Column>();
+
+        private readonly ICollection<ISearchIndex> _indexes = new List<ISearchIndex>();
     }
 }
