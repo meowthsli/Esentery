@@ -38,13 +38,13 @@ namespace Meowth.Esentery.Test
             using (var table = db.CreateTable(TABLE))
             {
                 var col1 = table.AddColumn<string>(COLUMN, 
-                    new ColumnOptions { ColumnType = typeof(String), Encoding = Encoding.Unicode, Length = 200 });
+                    new ColumnOptions { Encoding = Encoding.Unicode, Length = 200 });
 
                 var col2 = table.AddColumn<string>(COLUMN2,
-                    new ColumnOptions { ColumnType = typeof(String), Encoding = Encoding.Unicode, Length = 200 });
+                    new ColumnOptions { Encoding = Encoding.Unicode, Length = 200 });
 
                 table.AddColumn<string>(COLUMN3, 
-                    new ColumnOptions { ColumnType= typeof(String), Encoding = Encoding.Unicode, Length = 200 });
+                    new ColumnOptions { Encoding = Encoding.Unicode, Length = 200 });
 
                 table.AddColumn<int>("int_columns", new ColumnOptions { ColumnType = typeof(int), IsNullable = false});
                 table.AddSearchIndex(COLUMN, col1);

@@ -13,16 +13,16 @@ namespace Meowth.Esentery.Core
         public Column<T> AddColumn<T>(string columnName, ColumnOptions options)
         {
             JET_COLUMNID column;
-            
-            Api.JetAddColumn(CurrentSession, this, columnName, options.GetColumnDef(), null, 0, out column);
-            var newColumns = new Column<T>(this, columnName, options, column);
+
+            var typedOptions = options.OfType<T>();
+            Api.JetAddColumn(CurrentSession, this, columnName, typedOptions.GetColumnDef(), null, 0, out column);
+            var newColumns = new Column<T>(this, columnName, typedOptions, column);
             _columns.Add(newColumns);
             return newColumns;
         }
 
         /// <summary> Creates Index </summary>
         public SingleColumnIndex<T> AddSearchIndex<T>(string indexName, Column<T> column)
-            where T : IComparable<T>
         {
             if (column.Table != this)
                 throw new ArgumentException("Column doesn't belong to this table");
@@ -120,7 +120,7 @@ namespace Meowth.Esentery.Core
         private void LoadColumns()
         {
             foreach(var c in Api.GetTableColumns(CurrentSession, this)
-                .Select(c => new Column(this, c.Name, ColumnOptions.CreateFrom(c), c.Columnid)))
+                .Select(c => new Column(this, c.Name, ColumnOptions.From(c), c.Columnid)))
                 _columns.Add(c);
         }
 

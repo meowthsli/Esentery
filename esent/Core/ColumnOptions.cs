@@ -6,10 +6,16 @@ using Microsoft.Isam.Esent.Interop;
 namespace Meowth.Esentery.Core
 {
     /// <summary> Column options </summary>
-    public class ColumnOptions
+    public sealed class ColumnOptions
     {
+        /// <summary> Column options </summary>
+        public ColumnOptions()
+        {
+            Encoding = Encoding.Unicode;
+        }
+
         /// <summary> Creates from columndef </summary>
-        public static ColumnOptions CreateFrom(ColumnInfo cd)
+        public static ColumnOptions From(ColumnInfo cd)
         {
             return new ColumnOptions
                        {
@@ -17,6 +23,20 @@ namespace Meowth.Esentery.Core
                            IsNullable = ((cd.Grbit & ColumndefGrbit.ColumnNotNULL) == ColumndefGrbit.ColumnNotNULL),
                            Length = cd.MaxLength,
                        };
+        }
+
+        /// <summary> Creates from columndef </summary>
+        public ColumnOptions OfType<T>()
+        {
+            var c = this;
+            Converters.AssertType(typeof(T));
+            return new ColumnOptions
+            {
+                ColumnType = typeof(T),
+                IsNullable = c.IsNullable,
+                Length = c.Length,
+                Encoding = c.Encoding,
+            };
         }
 
         /// <summary> Creates column definition </summary>

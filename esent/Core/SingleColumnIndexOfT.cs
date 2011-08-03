@@ -39,7 +39,6 @@ namespace Meowth.Esentery.Core
 
     /// <summary> ESENT Index </summary>
     public sealed class SingleColumnIndex<T> : SingleColumnIndex
-        where T : IComparable<T>
     {
         /// <summary> Creates index </summary>
         internal static SingleColumnIndex<T> CreateSingleColumnIndex(Table table, string name, Column<T> column)
