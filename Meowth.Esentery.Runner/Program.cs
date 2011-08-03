@@ -82,7 +82,7 @@ namespace Meowth.Esentery.Test
                     ins.SetField(column1, message);
                     ins.SetField(column2, message2);
                     ins.SetField(column3, msg3);
-                    ins.SetField(column4, 5);
+                    ins.SetField(column4, 1);
                     ins.Save();
                 }
 
@@ -91,6 +91,7 @@ namespace Meowth.Esentery.Test
                     ins.SetField(column1, msg3);
                     ins.SetField(column2, message2);
                     ins.SetField(column3, msg3);
+                    ins.SetField(column4, 4);
                     ins.Save();
                 }
 
@@ -170,7 +171,7 @@ namespace Meowth.Esentery.Test
             Console.WriteLine("1.........\n\n");
 
             using (var table = db.OpenTable(TABLE))
-            using (var cursor = table.OpenCursor(new Eq<int>(table.GetIndex<int>(COLUMN4), 5)))
+            using (var cursor = table.OpenCursor(new Eq<int>(table.GetIndex<int>(COLUMN4), 4)))
                 while (cursor.MoveNext())
                     Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
                                         cursor.GetString(COLUMN3));
@@ -184,6 +185,14 @@ namespace Meowth.Esentery.Test
                                         cursor.GetString(COLUMN3));
 
             Console.WriteLine("0.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(new Le<int>(table.GetIndex<int>(COLUMN4), 3)))
+                while (cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+
+            Console.WriteLine("1.........\n\n");
         }
     }
 }

@@ -114,24 +114,42 @@ namespace Meowth.Esentery.Core
         #endregion
 
         /// <summary> Restricts range on equality of current </summary>
-        /// <param name="range"></param>
         public void Restrict(Range<T> range)
         {
             range.Normalize();
 
-            // TODO: process cases with one-side restriction
-            var keyFrom = Converters.Convert(range.From);
-            Api.JetMakeKey(CurrentSession, this, keyFrom, keyFrom.Length, MakeKeyGrbit.NewKey);
-            
-            Api.TrySeek(CurrentSession, this, range.InclusiveFrom ? SeekGrbit.SeekGE : SeekGrbit.SeekGT);
+            if (range.HasFrom & range.HasTo)
+            {
+                var keyFrom = Converters.Convert(range.From);
+                Api.JetMakeKey(CurrentSession, this, keyFrom, keyFrom.Length, MakeKeyGrbit.NewKey);
 
-            var keyTo = Converters.Convert(range.From);
-            Api.JetMakeKey(CurrentSession, this, keyTo, keyTo.Length, MakeKeyGrbit.NewKey);
-            
-            Api.TrySetIndexRange(CurrentSession, this,
-                                 range.InclusiveTo
-                                     ? SetIndexRangeGrbit.RangeUpperLimit | SetIndexRangeGrbit.RangeInclusive
-                                     : SetIndexRangeGrbit.RangeUpperLimit);
+                Api.TrySeek(CurrentSession, this, range.InclusiveFrom ? SeekGrbit.SeekGE : SeekGrbit.SeekGE);
+
+                var keyTo = Converters.Convert(range.To);
+                Api.JetMakeKey(CurrentSession, this, keyTo, keyTo.Length, MakeKeyGrbit.NewKey);
+
+                Api.TrySetIndexRange(CurrentSession, this,
+                                     range.InclusiveTo
+                                         ? SetIndexRangeGrbit.RangeUpperLimit | SetIndexRangeGrbit.RangeInclusive
+                                         : SetIndexRangeGrbit.RangeUpperLimit);
+            }
+            else if(!range.HasTo)
+            {
+                var keyFrom = Converters.Convert(range.From);
+                Api.JetMakeKey(CurrentSession, this, keyFrom, keyFrom.Length, MakeKeyGrbit.NewKey);
+
+                Api.TrySeek(CurrentSession, this, range.InclusiveFrom ? SeekGrbit.SeekGE : SeekGrbit.SeekGT);
+            }
+            else if(!range.HasFrom)
+            {
+                var keyTo = Converters.Convert(range.To);
+                Api.JetMakeKey(CurrentSession, this, keyTo, keyTo.Length, MakeKeyGrbit.NewKey);
+
+                Api.TrySetIndexRange(CurrentSession, this,
+                                     range.InclusiveTo
+                                         ? SetIndexRangeGrbit.RangeUpperLimit | SetIndexRangeGrbit.RangeInclusive
+                                         : SetIndexRangeGrbit.RangeUpperLimit);
+            }
         }
         
         /// <summary> Returns count of records </summary>

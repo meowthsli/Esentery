@@ -53,6 +53,7 @@
     <Compile Include="Core\Column.cs" />
     <Compile Include="Core\ColumnOfT.cs" />
     <Compile Include="Core\ColumnOptions.cs" />
+    <Compile Include="Core\SingleColumnIndex.cs" />
     <Compile Include="Core\IColumn.cs" />
     <Compile Include="Core\IIndex.cs" />
     <Compile Include="Core\INativeCursor.cs" />
@@ -82,6 +83,12 @@
     <Compile Include="IHasJetHandle.cs" />
     <Compile Include="ISessionObject.cs" />
     <Compile Include="Core\Converters.cs" />
+    <Compile Include="Querying\All.cs" />
+    <Compile Include="Querying\Ge.cs" />
+    <Compile Include="Querying\Gt.cs" />
+    <Compile Include="Querying\Le.cs" />
+    <Compile Include="Querying\Lt.cs" />
+    <Compile Include="Querying\RangePredicate.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Querying\And.cs" />

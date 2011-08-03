@@ -6,9 +6,19 @@ namespace Meowth.Esentery.Core
     public sealed class Range<T>
         where T : IComparable<T>
     {
-        public T From { get; internal set;}
+        public T From
+        {
+            get { return _from; }
+            internal set { _from = value; HasFrom = true;}
+        }
+        private T _from;
         public bool HasFrom { get; internal set; }
-        public T To { get; internal set; }
+        public T To
+        {
+            get { return _to; }
+            internal set { _to = value; HasTo = true;}
+        }
+        private T _to;
         public bool HasTo { get; internal set; }
 
         public bool InclusiveFrom { get; internal set; }
