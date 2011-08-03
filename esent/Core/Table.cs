@@ -24,7 +24,7 @@ namespace Meowth.Esentery.Core
         }
 
         /// <summary> Creates Index </summary>
-        public SingleColumnIndex<T> AddSearchIndex<T>(string indexName, Column<T> column)
+        public SearchIndex<T> AddSearchIndex<T>(string indexName, Column<T> column)
         {
             if (column.Table != this)
                 throw new ArgumentException("Column doesn't belong to this table");
@@ -32,7 +32,7 @@ namespace Meowth.Esentery.Core
             if(_indexes.Any(i => i.Column == column))
                 throw new ArgumentException("Index on specified column already exists");
 
-            var idx = SingleColumnIndex<T>.CreateSingleColumnIndex(this, indexName, column);
+            var idx = SearchIndex<T>.CreateSingleColumnIndex(this, indexName, column);
             _indexes.Add(idx);
             return idx;
         }
@@ -44,17 +44,23 @@ namespace Meowth.Esentery.Core
         }
 
         /// <summary> Returns index by name </summary>
-        public SingleColumnIndex<T> GetIndex<T>(string indexName)
+        public SearchIndex<T> GetIndex<T>(string indexName)
             where T : IComparable<T>
         {
             // TODO: actuall return real index
-            return new SingleColumnIndex<T>(this, indexName, null);
+            return new SearchIndex<T>(this, indexName, null);
         }
         
         /// <summary> Returns copy of column list </summary>
         public ICollection<Column> GetColumns()
         {
             return new List<Column>(_columns);
+        }
+
+        /// <summary> Returns copy of column list </summary>
+        public ICollection<IIndex> GetIndexes()
+        {
+            return new List<IIndex>(_indexes);
         }
         
         /// <summary> Current database </summary>
@@ -96,10 +102,10 @@ namespace Meowth.Esentery.Core
         }
 
         /// <summary> Opens native cursor over this table </summary>
-        internal NativeCursor<T> OpenNativeCursor<T>(SingleColumnIndex<T> singleColumnIndex)
+        internal NativeCursor<T> OpenNativeCursor<T>(SearchIndex<T> searchIndex)
             where T : IComparable<T>
         {
-            return new NativeCursor<T>(this, singleColumnIndex);
+            return new NativeCursor<T>(this, searchIndex);
         }
 
         /// <summary> Returns column id </summary>
@@ -139,12 +145,20 @@ namespace Meowth.Esentery.Core
         /// <summary> Loads columns of table </summary>
         private void LoadIndexes()
         {
-            foreach (var ix in Api.GetTableIndexes(CurrentSession, this)
-                .Select(idx => new SingleColumnIndex(this,
-                    idx.Name,
-                    _columns.First(c => c.ColumnName == idx.IndexSegments[0].ColumnName))))
+            foreach (var idx in Api.GetTableIndexes(CurrentSession, this))
+            {
+                var type = typeof(SearchIndex<>).MakeGenericType(
+                    Converters.GetClrType(idx.IndexSegments[0].Coltyp)
+                    );
+
+                // TODO: refactor this code
+                var ix = (ISearchIndex)Activator.CreateInstance(type,
+                    BindingFlags.Instance | BindingFlags.NonPublic, null,
+                    new object[] { this, idx.Name, _columns.First(c => c.ColumnName == idx.IndexSegments[0].ColumnName) },
+                    CultureInfo.CurrentCulture);
+                
                 _indexes.Add(ix);
-            
+            }
         }
 
         /// <summary> Columns cache </summary>

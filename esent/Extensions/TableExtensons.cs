@@ -18,13 +18,36 @@ namespace Meowth.Esentery.Extensions
         }
 
         /// <summary> Returns untyped column </summary>
-        public static Column GetColumn(this Table table, string name)
+        public static Column GetColumn(this Table table, string columnName)
         {
-            var cols = table.GetColumns().Where(c => c.ColumnName == name);
+            var cols = table.GetColumns().Where(c => c.ColumnName == columnName).ToList();
             if (cols.Count() == 0)
                 throw new ArgumentException("Column with such name and type not found");
 
             return cols.First();
+        }
+
+        /// <summary> Returns untyped index </summary>
+        public static ISearchIndex GetSearchIndexOfColumn(this Table table, string columnName)
+        {
+            var column = table.GetColumn(columnName);
+            var indices = table.GetIndexes()
+                .OfType<ISearchIndex>()
+                .Where(i => i.Column == column)
+                .ToList();
+
+            if (indices.Count() == 0)
+                throw new ArgumentException("There is no search index on given column");
+            if (indices.Count() > 1)
+                throw new ArgumentException("There is too many search indices on given column");
+
+            return indices.First();
+        }
+
+        /// <summary> Returns untyped index </summary>
+        public static SearchIndex<T> GetSearchIndexOfColumn<T>(this Table table, string columnName)
+        {
+            return (SearchIndex<T>) GetSearchIndexOfColumn(table, columnName);
         }
     }
 }

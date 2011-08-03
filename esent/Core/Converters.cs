@@ -33,7 +33,7 @@ namespace Meowth.Esentery.Querying
         }
 
         /// <summary> Returns CLR type</summary>
-        private static Type GetClrType(JET_coltyp colType)
+        public static Type GetClrType(JET_coltyp colType)
         {
             return MapJetTypeToClrType[colType];
         }

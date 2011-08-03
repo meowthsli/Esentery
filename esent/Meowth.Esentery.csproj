@@ -76,6 +76,7 @@
     <Compile Include="Core\Table.cs" />
     <Compile Include="Core\Transaction.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Extensions\PredicateFactory.cs" />
     <Compile Include="Extensions\RangeExtensions.cs" />
     <Compile Include="Extensions\RowModificationExtensions.cs" />
     <Compile Include="Extensions\TableExtensons.cs" />
@@ -99,8 +100,9 @@
     <Compile Include="Querying\Predicate.cs" />
     <Compile Include="Querying\StartsWith.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Maintainance\" />
+    <Content Include="Maintainance\Target.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

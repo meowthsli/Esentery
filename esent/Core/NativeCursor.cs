@@ -18,10 +18,10 @@ namespace Meowth.Esentery.Core
         #region Construction & Disposing
 
         /// <summary> Opens existing table </summary>
-        internal NativeCursor(Table table, SingleColumnIndex<T> singleColumnIndex)
+        internal NativeCursor(Table table, SearchIndex<T> searchIndex)
         {
             Table = table;
-            SearchIndex = singleColumnIndex;
+            SearchIndex = searchIndex;
 
             Api.JetDupCursor(CurrentSession, Table, out JetHandle, DupCursorGrbit.None);
 
@@ -54,7 +54,7 @@ namespace Meowth.Esentery.Core
         public Table Table { get; private set; }
 
         /// <summary> Index reference on this </summary>
-        public SingleColumnIndex<T> SearchIndex { get; private set; }
+        public SearchIndex<T> SearchIndex { get; private set; }
 
         /// <summary> Appends row </summary>
         public RowModification AddRow()

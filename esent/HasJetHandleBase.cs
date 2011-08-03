@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Meowth.Esentery.Core;
 
 namespace Meowth.Esentery
@@ -19,7 +20,7 @@ namespace Meowth.Esentery
         /// <summary> Finalizer </summary>
         ~HasJetHandleBase()
         {
-            Console.WriteLine("Finalizer called on type " + GetType().Name);
+            Trace.WriteLine("WARN: Finalizer called on type " + GetType().Name);
             Dispose(false);
             Disposed = true;
         }

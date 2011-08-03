@@ -11,8 +11,8 @@ namespace Meowth.Esentery.Querying
         where T : IComparable<T>
     {
         /// <summary> EQ clause </summary>
-        public Eq(SingleColumnIndex<T> singleColumnIndex, T val)
-            : base(singleColumnIndex, val)
+        public Eq(SearchIndex<T> searchIndex, T val)
+            : base(searchIndex, val)
         {
         }
 
