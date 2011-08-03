@@ -32,6 +32,8 @@ namespace Meowth.Esentery.Test
             const string COLUMN = "column";
             const string COLUMN2 = "column2";
             const string COLUMN3 = "column3";
+            const string COLUMN4 = "int_column";
+
             using (var tx = db.Session.BeginTransaction())
             using (var table = db.CreateTable(TABLE))
             {
@@ -44,10 +46,10 @@ namespace Meowth.Esentery.Test
                 table.AddColumn<string>(COLUMN3, 
                     new ColumnOptions { Encoding = Encoding.Unicode, Length = 200 });
 
-                var col4 = table.AddColumn<int>("int_column", new ColumnOptions { ColumnType = typeof(int), IsNullable = false});
+                var col4 = table.AddColumn<int>(COLUMN4, new ColumnOptions { ColumnType = typeof(int), IsNullable = false});
                 table.AddSearchIndex(COLUMN, col1);
                 table.AddSearchIndex(COLUMN2, col2);
-                table.AddSearchIndex("int_idx", col4);
+                table.AddSearchIndex(COLUMN4, col4);
 
                 tx.Commit();
             }
@@ -80,7 +82,7 @@ namespace Meowth.Esentery.Test
                     ins.SetField(column1, message);
                     ins.SetField(column2, message2);
                     ins.SetField(column3, msg3);
-                    ins.SetField(column4, "sdfsfsd");
+                    ins.SetField(column4, 5);
                     ins.Save();
                 }
 
@@ -166,6 +168,22 @@ namespace Meowth.Esentery.Test
                                         cursor.GetString(COLUMN3));
 
             Console.WriteLine("1.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(new Eq<int>(table.GetIndex<int>(COLUMN4), 5)))
+                while (cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+
+            Console.WriteLine("1.........\n\n");
+
+            using (var table = db.OpenTable(TABLE))
+            using (var cursor = table.OpenCursor(new Eq<int>(table.GetIndex<int>(COLUMN4), 6)))
+                while (cursor.MoveNext())
+                    Console.WriteLine(cursor.GetString(COLUMN) + " | " + cursor.GetString(COLUMN2) + " | " +
+                                        cursor.GetString(COLUMN3));
+
+            Console.WriteLine("0.........\n\n");
         }
     }
 }
