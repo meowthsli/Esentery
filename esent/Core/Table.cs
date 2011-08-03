@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
 using Meowth.Esentery.Querying;
 using Microsoft.Isam.Esent.Interop;
 using System.Linq;
@@ -119,9 +121,19 @@ namespace Meowth.Esentery.Core
         /// <summary> Loads columns of table </summary>
         private void LoadColumns()
         {
-            foreach(var c in Api.GetTableColumns(CurrentSession, this)
-                .Select(c => new Column(this, c.Name, ColumnOptions.From(c), c.Columnid)))
-                _columns.Add(c);
+            foreach(var c in Api.GetTableColumns(CurrentSession, this))
+            {
+                var ops = ColumnOptions.From(c);
+                var type = typeof (Column<>).MakeGenericType(ops.ColumnType);
+                
+                // TODO: refactor this code
+                var cc = (Column)Activator.CreateInstance(type, 
+                    BindingFlags.Instance | BindingFlags.NonPublic, null,
+                    new object[] {this, c.Name, ops, c.Columnid},
+                    CultureInfo.CurrentCulture);
+                
+                _columns.Add(cc);
+            }
         }
 
         /// <summary> Loads columns of table </summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using Meowth.Esentery.Core;
 using Meowth.Esentery.Querying;
@@ -75,22 +76,25 @@ namespace Meowth.Esentery.Test
             using (var cursor = table.OpenPrimaryCursor())
             {
                 const string message = "Hello world";
-
                 const string msg3 = "msg3";
+
+                var column1 = (Column<string>)table.GetColumns().First(x => x.ColumnName == COLUMN);
+                var column2 = (Column<string>)table.GetColumns().First(x => x.ColumnName == COLUMN2);
+                var column3 = (Column<string>)table.GetColumns().First(x => x.ColumnName == COLUMN3);
 
                 using (var ins = cursor.AddRow())
                 {
-                    ins.SetString(COLUMN, message);
-                    ins.SetString(COLUMN2, message2);
-                    ins.SetString(COLUMN3, msg3);
+                    ins.SetField(column1, message);
+                    ins.SetField(column2, message2);
+                    ins.SetField(column3, msg3);
                     ins.Save();
                 }
 
                 using (var ins = cursor.AddRow())
                 {
-                    ins.SetString(COLUMN, msg3);
-                    ins.SetString(COLUMN2, message2);
-                    ins.SetString(COLUMN3, msg3);
+                    ins.SetField(column1, msg3);
+                    ins.SetField(column2, message2);
+                    ins.SetField(column3, msg3);
                     ins.Save();
                 }
 
