@@ -22,7 +22,7 @@ namespace Meowth.Esentery.Extensions
         /// <summary> Opens Index by name </summary>
         public static ICursor OpenPrimaryCursor(this Table table)
         {
-            return table.OpenNativeCursor((SingleColumnIndex<string>)null);
+            return table.OpenNativeCursor((SearchIndex<string>)null);
         }
     }
 }
