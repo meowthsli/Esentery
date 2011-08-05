@@ -123,7 +123,7 @@ namespace Meowth.Esentery.Core
                 var keyFrom = Converters.Convert(range.From);
                 Api.JetMakeKey(CurrentSession, this, keyFrom, keyFrom.Length, MakeKeyGrbit.NewKey);
 
-                Api.TrySeek(CurrentSession, this, range.InclusiveFrom ? SeekGrbit.SeekGE : SeekGrbit.SeekGE);
+                Api.TrySeek(CurrentSession, this, range.InclusiveFrom ? SeekGrbit.SeekGE : SeekGrbit.SeekGT);
 
                 var keyTo = Converters.Convert(range.To);
                 Api.JetMakeKey(CurrentSession, this, keyTo, keyTo.Length, MakeKeyGrbit.NewKey);
@@ -155,7 +155,7 @@ namespace Meowth.Esentery.Core
         /// <summary> Returns count of records </summary>
         public bool HasRecords()
         {
-            var res = Api.TryMoveNext(CurrentSession, this); ;
+            var res = Api.TryMoveNext(CurrentSession, this);
             if (res)
                 Api.TryMovePrevious(CurrentSession, this);
 

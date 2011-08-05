@@ -47,8 +47,15 @@ namespace Meowth.Esentery.Core
         public SearchIndex<T> GetIndex<T>(string indexName)
             where T : IComparable<T>
         {
-            // TODO: actuall return real index
-            return new SearchIndex<T>(this, indexName, null);
+            var index = _indexes.FirstOrDefault(i => i.Name == indexName);
+            if(index == null)
+                throw new ArgumentException("No index found by given name");
+
+            if(index.Column.ColumnType != typeof(T))
+                throw new ArgumentException(string.Format("Index type differs from specified; expected '{0}', found '{1}'", 
+                    typeof(T).Name, index.Column.ColumnType.Name));
+
+            return (SearchIndex<T>) index;
         }
         
         /// <summary> Returns copy of column list </summary>

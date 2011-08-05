@@ -20,11 +20,11 @@ namespace Meowth.Esentery.Extensions
         /// <summary> Returns untyped column </summary>
         public static Column GetColumn(this Table table, string columnName)
         {
-            var cols = table.GetColumns().Where(c => c.ColumnName == columnName).ToList();
-            if (cols.Count() == 0)
+            var col = table.GetColumns().FirstOrDefault(c => c.ColumnName == columnName);
+            if (col == null)
                 throw new ArgumentException("Column with such name and type not found");
 
-            return cols.First();
+            return col;
         }
 
         /// <summary> Returns untyped index </summary>

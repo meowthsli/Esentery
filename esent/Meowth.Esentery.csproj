@@ -53,7 +53,7 @@
     <Compile Include="Core\Column.cs" />
     <Compile Include="Core\ColumnOfT.cs" />
     <Compile Include="Core\ColumnOptions.cs" />
-    <Compile Include="Core\SingleColumnIndex.cs" />
+    <Compile Include="Core\SearchIndex.cs" />
     <Compile Include="Core\IColumn.cs" />
     <Compile Include="Core\IIndex.cs" />
     <Compile Include="Core\INativeCursor.cs" />

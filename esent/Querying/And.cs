@@ -11,7 +11,6 @@ namespace Meowth.Esentery.Querying
     public class And : ComplexPredicate
     {
         /// <summary> AND clause </summary>
-        /// <param name="predicates"></param>
         public And(params Predicate[] predicates) : base(predicates) {}
         
         /// <summary> Returns sequence of bookmarks </summary>

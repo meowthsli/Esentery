@@ -4,7 +4,7 @@ using Microsoft.Isam.Esent.Interop;
 namespace Meowth.Esentery.Core
 {
     /// <summary> ESENT Index </summary>
-    public sealed class SearchIndex<T> : SingleColumnIndex
+    public sealed class SearchIndex<T> : SearchIndex
     {
         /// <summary> Creates index </summary>
         internal static SearchIndex<T> CreateSingleColumnIndex(Table table, string name, Column<T> column)

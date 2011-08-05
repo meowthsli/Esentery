@@ -24,6 +24,7 @@ namespace Meowth.Esentery.Core
         public bool InclusiveFrom { get; internal set; }
         public bool InclusiveTo { get; internal set; }
 
+        /// <summary> Creates range for compare for equality </summary>
         public static Range<T> CreateEquality(T val)
         {
             return new Range<T>
@@ -37,7 +38,7 @@ namespace Meowth.Esentery.Core
                        };
         }
 
-        /// <summary> </summary>
+        /// <summary> Create range </summary>
         public static Range<U> CreateRange<U>(U? from, U? to, 
             bool inclusiveFrom = true, 
             bool inclusiveTo = true)

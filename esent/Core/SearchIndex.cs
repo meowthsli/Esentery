@@ -3,17 +3,18 @@ using Microsoft.Isam.Esent.Interop;
 
 namespace Meowth.Esentery.Core
 {
-    /// <summary> ESENT untyped index </summary>
-    public class SingleColumnIndex : ISearchIndex, IHasJetHandle<JET_INDEXID>
+    /// <summary> ESENT untyped single column (search) index </summary>
+    public class SearchIndex : ISearchIndex, IHasJetHandle<JET_INDEXID>
     {
         /// <summary> ESET Index </summary>
-        internal SingleColumnIndex(Table table, string indexName, Column column)
+        internal SearchIndex(Table table, string indexName, Column column)
         {
             Table = table;
             Name = indexName;
             Column = column;
         }
 
+        /// <summary> Parent table </summary>
         public Table Table { get; private set; }
 
         /// <summary> Index name </summary>
@@ -25,15 +26,15 @@ namespace Meowth.Esentery.Core
         /// <summary> Return type of T </summary>
         public Type ColumnType { get { return Column.ColumnType; } }
 
+
         #region
 
         /// <summary> Currnt session holder </summary>
-        /// <summary> Currnt session holder </summary>
         internal Session CurrentSession { get { return Table.CurrentSession; } }
-
-        #endregion
 
         /// <summary> Handle of </summary>
         public JET_INDEXID Handle { get; private set; }
+
+        #endregion
     }
 }

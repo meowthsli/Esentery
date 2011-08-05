@@ -125,18 +125,15 @@ namespace Meowth.Esentery.Test
                 using (var cursor = table.OpenPrimaryCursor())
                     AssertRC(2, cursor, "Simply enum rows");
 
-
-                using (var cursor = table.OpenCursor(new Eq<string>(table.GetIndex<string>(COLUMN), "msg3")))
+                using (var cursor = table.OpenCursor(new Eq<int>(table.GetIndex<int>(COLUMN), 0/*"msg3"*/)))
                     AssertRC(1, cursor, "Find where column1 = msg3");
 
                 using (var cursor = table.OpenCursor(pf.Eq(COLUMN, "msg3")))
                     AssertRC(1, cursor, "Find where column1 = msg3");
-
-
+                
                 using (var cursor = table.OpenCursor(pf.Eq(COLUMN2, message2)))
                     AssertRC(2, cursor, "Find where column2 = message2");
-
-
+                
                 using (var cursor = table.OpenCursor(new StartsWith(table.GetIndex<string>(COLUMN), "Hell")))
                     AssertRC(1, cursor, "Find where column1 LIKE Hell");
 
