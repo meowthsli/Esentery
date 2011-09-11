@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Meowth.Esentery.Additions;
+using Meowth.Esentery.Extensions;
 using Meowth.Esentery.Querying;
 using Microsoft.Isam.Esent.Interop;
 

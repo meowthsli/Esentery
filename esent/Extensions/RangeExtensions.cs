@@ -1,7 +1,7 @@
 using System;
 using Meowth.Esentery.Core;
 
-namespace Meowth.Esentery.Additions
+namespace Meowth.Esentery.Extensions
 {
     /// <summary> Range extensions methods </summary>
     public static class RangeExtensions

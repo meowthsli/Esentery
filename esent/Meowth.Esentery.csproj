@@ -90,7 +90,6 @@
     <Compile Include="Querying\Le.cs" />
     <Compile Include="Querying\Lt.cs" />
     <Compile Include="Querying\RangePredicate.cs" />
-    <Compile Include="TestRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Querying\And.cs" />
     <Compile Include="Querying\Between.cs" />
