@@ -17,6 +17,12 @@ namespace Meowth.Esentery.Extensions
             return (Column<T>) c;
         }
 
+        /// <summary> Removes all rows from table </summary>
+        public static void RemoveAllRows(this Table table)
+        {
+            // TODO:
+        }
+
         /// <summary> Returns untyped column </summary>
         public static Column GetColumn(this Table table, string columnName)
         {
