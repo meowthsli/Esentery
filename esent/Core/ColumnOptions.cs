@@ -29,7 +29,7 @@ namespace Meowth.Esentery.Core
         public ColumnOptions OfType<T>()
         {
             var c = this;
-            Converters.AssertType(typeof(T));
+            Converters.AssertTypeIsValidEsentType(typeof(T));
             return new ColumnOptions
             {
                 ColumnType = typeof(T),

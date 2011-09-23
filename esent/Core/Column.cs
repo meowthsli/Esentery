@@ -31,5 +31,8 @@ namespace Meowth.Esentery.Core
 
         /// <summary> Column native handle </summary>
         public JET_COLUMNID Handle { get; private set; }
+
+        /// <summary> Приведение к атомарному типу </summary>
+        public static implicit operator JET_COLUMNID(Column column) { return column.Handle; }
     }
 }

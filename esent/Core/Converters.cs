@@ -1,20 +1,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Meowth.Esentery.Core;
+using System.Text;
 using Microsoft.Isam.Esent.Interop;
 using Microsoft.Isam.Esent.Interop.Vista;
 
-namespace Meowth.Esentery.Querying
+namespace Meowth.Esentery.Core
 {
+    /// <summary> Untyped column accessor </summary>
+    public delegate object ColumnValueGetter(JET_SESID session, JET_TABLEID table, JET_COLUMNID column);
+
+    /// <summary> Untyped column accessor </summary>
+    public delegate void ColumnValueSetter(JET_SESID session, JET_TABLEID table, JET_COLUMNID column, object value);
+
+    /// <summary> Tuple of values </summary>
+    public sealed class ColumnValueAccessor
+    {
+        /// <summary> Tuple of values </summary>
+        public ColumnValueAccessor(ColumnValueGetter getter, ColumnValueSetter setter)
+        {
+            Getter = getter;
+            Setter = setter;
+        }
+
+        /// <summary> Value getter </summary>
+        public ColumnValueGetter Getter { get; private set; }
+
+        /// <summary> Value setter </summary>
+        public ColumnValueSetter Setter { get; private set; }
+    }
+
     /// <summary> All byte converters </summary>
     /// <remarks> Переписать на LCG </remarks>
-    static class Converters
+    internal static class Converters
     {
         /// <summary> Checks the type is valid </summary>
-        public static void AssertType(Type type)
+        public static void AssertTypeIsValidEsentType(Type type)
         {
-            if (!ValidEsentTypes.Contains(type))
+            if (!s_validEsentTypes.Contains(type))
                 throw new ArgumentException(
                     string.Format("Type '{0}' is not supported. Valid types are {1}", type, TypesList));
 
@@ -46,19 +69,19 @@ namespace Meowth.Esentery.Querying
             if (MapClrTypeToEsentType.ContainsKey(options.ColumnType))
                 return MapClrTypeToEsentType[options.ColumnType];
 
-            if(options.ColumnType == typeof(byte[]))
-                if(!options.Length.HasValue)
+            if (options.ColumnType == typeof (byte[]))
+                if (!options.Length.HasValue)
                     return JET_coltyp.LongBinary;
                 else
                     return options.Length < 256 ? JET_coltyp.Binary : JET_coltyp.LongBinary;
 
-            if (options.ColumnType == typeof(string))
+            if (options.ColumnType == typeof (string))
                 if (!options.Length.HasValue)
                     return JET_coltyp.LongText;
                 else
                     return options.Length < 256 ? JET_coltyp.Text : JET_coltyp.LongText;
 
-            AssertType(options.ColumnType);
+            AssertTypeIsValidEsentType(options.ColumnType);
 
             return 0;
         }
@@ -66,7 +89,7 @@ namespace Meowth.Esentery.Querying
         /// <summary> Converts value to sequence of bytes </summary>
         public static byte[] Convert<T>(T value)
         {
-            return GetConverter(typeof(T))(value);
+            return GetConverter(typeof (T))(value);
         }
 
         /// <summary> Converts value to sequence of bytes </summary>
@@ -74,6 +97,110 @@ namespace Meowth.Esentery.Querying
         {
             return GetConverter(t)(value);
         }
+
+        /// <summary> Retrieves value of column </summary>
+        public static ColumnValueGetter GetGetter(Type t)
+        {
+            return s_accessors[t].Getter;
+        }
+
+        /// <summary> Retrieves value of column </summary>
+        public static ColumnValueSetter GetSetter(Type t)
+        {
+            return s_accessors[t].Setter;
+        }
+
+        /// <summary> Access to column values </summary>
+        private static readonly Dictionary<Type, ColumnValueAccessor> s_accessors
+            = new Dictionary<Type, ColumnValueAccessor>
+                  {
+                      {
+                          typeof (int),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsInt32(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (int) value))
+                          },
+
+                      {
+                          typeof (uint),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsUInt32(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (uint) value))
+                          },
+
+                      {
+                          typeof (short),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsInt16(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (short) value))
+                          },
+
+                      {
+                          typeof (ushort),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsUInt16(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (ushort) value))
+                          },
+
+                      {
+                          typeof (byte),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsByte(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (byte) value))
+                          },
+
+                      {
+                          typeof (long),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsInt64(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (long) value))
+                          },
+
+
+                      {
+                          typeof (double),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsDouble(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (double) value))
+                          },
+
+                      {
+                          typeof (float),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsFloat(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (float) value))
+                          },
+
+
+                      {
+                          typeof (string),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsString(sess, table, column, Encoding.Unicode),
+                          (sess, table, column, value) =>
+                          Api.SetColumn(sess, table, column, (string) value, Encoding.Unicode))
+                          },
+
+                      {
+                          typeof (ulong),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsUInt64(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (ulong) value))
+                          },
+
+                      {
+                          typeof (bool),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsBoolean(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (bool) value))
+                          },
+
+                      {
+                          typeof (byte[]),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumn(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (byte[]) value))
+                          },
+                  };
         
         /// <summary> Returns suitable converter </summary>
         private static Func<object, byte[]> GetConverter(Type t)
@@ -83,9 +210,9 @@ namespace Meowth.Esentery.Querying
 
             throw new NotSupportedException("Dont' know how to convert this type to byte sequence");
         }
-
+      
         /// <summary> All types known to be valid Esent types </summary>
-        private static readonly HashSet<Type> ValidEsentTypes
+        private static readonly HashSet<Type> s_validEsentTypes
            = new HashSet<Type>
                   {
                       typeof(int),
@@ -98,7 +225,7 @@ namespace Meowth.Esentery.Querying
                       typeof(double),
                       typeof(float),
                       typeof(string),
-                      typeof(decimal),
+                      typeof(ulong),
                       
                       typeof(bool),
                       typeof(DateTime),
@@ -108,13 +235,12 @@ namespace Meowth.Esentery.Querying
                   };
 
         /// <summary> Списо тип </summary>
-        private static readonly string TypesList = string.Join(",", ValidEsentTypes.Select(s => s.Name).ToArray());
+        private static readonly string TypesList = string.Join(",", s_validEsentTypes.Select(s => s.Name).ToArray());
 
         private static readonly Dictionary<JET_coltyp, Type> MapJetTypeToClrType
             = new Dictionary<JET_coltyp, Type>
                   {
                       {JET_coltyp.Bit, typeof(bool)},
-                      {JET_coltyp.Currency, typeof(decimal)},
                       {JET_coltyp.DateTime, typeof(DateTime)},
                       {JET_coltyp.IEEEDouble, typeof(double)},
                       {JET_coltyp.IEEESingle, typeof(float)},

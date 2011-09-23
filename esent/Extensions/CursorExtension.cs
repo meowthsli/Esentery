@@ -13,7 +13,7 @@ namespace Meowth.Esentery.Extensions
             using (var insertion = nativeReadonlyCursor.AddRow())
             {
                 for (var i = 0; i < columns.Length; ++i)
-                    insertion.SetField(nativeReadonlyCursor.Table.GetColumn(columns[i]), values[i]);
+                    insertion.SetValue(nativeReadonlyCursor.Table.GetColumn(columns[i]), values[i]);
 
                 insertion.Save();
             }

@@ -97,19 +97,19 @@ namespace Meowth.Esentery.Test
 
                 using (var ins = cursor.AddRow())
                 {
-                    ins.SetField(column1, message);
-                    ins.SetField(column2, message2);
-                    ins.SetField(column3, msg3);
-                    ins.SetField(column4, 1);
+                    ins.SetValue(column1, message);
+                    ins.SetValue(column2, message2);
+                    ins.SetValue(column3, msg3);
+                    ins.SetValue(column4, 1);
                     ins.Save();
                 }
 
                 using (var ins = cursor.AddRow())
                 {
-                    ins.SetField(column1, msg3);
-                    ins.SetField(column2, message2);
-                    ins.SetField(column3, msg3);
-                    ins.SetField(column4, 4);
+                    ins.SetValue(column1, msg3);
+                    ins.SetValue(column2, message2);
+                    ins.SetValue(column3, msg3);
+                    ins.SetValue(column4, 4);
                     ins.Save();
                 }
 

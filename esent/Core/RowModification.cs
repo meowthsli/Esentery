@@ -6,7 +6,7 @@ using Microsoft.Isam.Esent.Interop;
 namespace Meowth.Esentery.Core
 {
     /// <summary> Insertion to database </summary>
-    public class RowModification : IDisposable
+    public class RowModification : IDisposable, IRowAccess
     {
         /// <summary> Prepares insertion </summary>
         internal RowModification(Table table, HasJetHandleBase<JET_TABLEID> cursor, JET_prep preparationType)
@@ -26,20 +26,23 @@ namespace Meowth.Esentery.Core
         {
             Api.JetUpdate(CurrentSession, Cursor);
         }
-
-        /// <summary> Field set up without types </summary>
-        public void SetField(Column column, object value)
-        {
-            if(column.ColumnType != value.GetType())
-                throw new ArgumentException("Column has another type");
-
-            var data = Converters.Convert(column.ColumnType, value);
-            Api.JetSetColumn(CurrentSession, Cursor, column.Handle, data, data.Length, SetColumnGrbit.None, 
-                new JET_SETINFO());
-        }
-
+        
         public void Dispose() { }
 
         public Session CurrentSession { get { return Table.Database.CurrentSession; } }
+
+        /// <summary> Returns value at column </summary>
+        public object GetValue(Column column)
+        {
+            return Converters.GetGetter(column.ColumnType)
+                (CurrentSession, Cursor, column);
+        }
+
+        /// <summary> Sets new value </summary>
+        public void SetValue(Column column, object value)
+        {
+            Converters.GetSetter(column.ColumnType)
+                (CurrentSession, Cursor, column, value);
+        }
     }
 }
