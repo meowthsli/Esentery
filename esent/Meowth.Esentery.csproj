@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="Core\Bookmark.cs" />
     <Compile Include="Core\Column.cs" />
-    <Compile Include="Core\ColumnOfT.cs" />
     <Compile Include="Core\ColumnOptions.cs" />
     <Compile Include="Core\SearchIndex.cs" />
     <Compile Include="Core\IColumn.cs" />
@@ -60,7 +59,6 @@
     <Compile Include="Core\ISearchIndex.cs" />
     <Compile Include="Core\KeyOptions.cs" />
     <Compile Include="Core\Range.cs" />
-    <Compile Include="Core\SingleColumnIndexOfT.cs" />
     <Compile Include="Extensions\CursorExtension.cs" />
     <Compile Include="Core\ICursor.cs" />
     <Compile Include="Core\IReadonlyCursor.cs" />

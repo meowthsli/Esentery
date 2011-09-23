@@ -20,7 +20,7 @@ namespace Meowth.Esentery.Extensions
         public Eq<T> Eq<T>(string columnName, T val)
             where T : IComparable<T>
         {
-            var index = Table.GetSearchIndexOfColumn<T>(columnName);
+            var index = Table.GetSearchIndexOfColumn(columnName);
             return new Eq<T>(index, val);
         }
 
@@ -28,7 +28,7 @@ namespace Meowth.Esentery.Extensions
         public Le<T> Le<T>(string columnName, T val)
             where T : IComparable<T>
         {
-            var index = Table.GetSearchIndexOfColumn<T>(columnName);
+            var index = Table.GetSearchIndexOfColumn(columnName);
             return new Le<T>(index, val);
         }
 
@@ -36,7 +36,7 @@ namespace Meowth.Esentery.Extensions
         public Lt<T> Lt<T>(string columnName, T val)
             where T : IComparable<T>
         {
-            var index = Table.GetSearchIndexOfColumn<T>(columnName);
+            var index = Table.GetSearchIndexOfColumn(columnName);
             return new Lt<T>(index, val);
         }
 
@@ -44,7 +44,7 @@ namespace Meowth.Esentery.Extensions
         public Ge<T> Ge<T>(string columnName, T val)
             where T : IComparable<T>
         {
-            var index = Table.GetSearchIndexOfColumn<T>(columnName);
+            var index = Table.GetSearchIndexOfColumn(columnName);
             return new Ge<T>(index, val);
         }
 
@@ -52,14 +52,14 @@ namespace Meowth.Esentery.Extensions
         public Gt<T> Gt<T>(string columnName, T val)
             where T : IComparable<T>
         {
-            var index = Table.GetSearchIndexOfColumn<T>(columnName);
+            var index = Table.GetSearchIndexOfColumn(columnName);
             return new Gt<T>(index, val);
         }
 
         /// <summary> &gt; </summary>
         public StartsWith StartsWith(string columnName, string val)
         {
-            var index = Table.GetSearchIndexOfColumn<string>(columnName);
+            var index = Table.GetSearchIndexOfColumn(columnName);
             return new StartsWith(index, val);
         }
 
@@ -67,7 +67,7 @@ namespace Meowth.Esentery.Extensions
         public Between<T> Between<T>(string columnName, T val1, T val2, bool inclFrom = true, bool inclTo = true)
             where T : IComparable<T>
         {
-            var index = Table.GetSearchIndexOfColumn<T>(columnName);
+            var index = Table.GetSearchIndexOfColumn(columnName);
             return new Between<T>(index, val1, inclFrom, val2, inclTo);
         }
     }

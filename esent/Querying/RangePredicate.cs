@@ -8,7 +8,7 @@ namespace Meowth.Esentery.Querying
     public abstract class RangePredicate<T> : Predicate where T : IComparable<T>
     {
         /// <summary> LE clause </summary>
-        protected RangePredicate(SearchIndex<T> searchIndex, T val)
+        protected RangePredicate(ISearchIndex searchIndex, T val)
         {
             SearchIndex = searchIndex;
             Val = val;
@@ -32,7 +32,7 @@ namespace Meowth.Esentery.Querying
         protected abstract Range<T> CreateRange();
 
         /// <summary> This search index </summary>
-        public SearchIndex<T> SearchIndex { get; private set; }
+        public ISearchIndex SearchIndex { get; private set; }
 
         /// <summary> Value to compare </summary>
         public T Val { get; private set; }

@@ -11,7 +11,7 @@ namespace Meowth.Esentery.Querying
         /// <summary> Opens cursor on default Index </summary>
         internal override IEnumerable<Bookmark> GetBookmarksGenerator(Table table, bool notRewind)
         {
-            return table.OpenNativeCursor<T>(null);
+            return table.OpenNativeCursor(null);
         }
     }
 }

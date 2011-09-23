@@ -36,5 +36,15 @@ namespace Meowth.Esentery.Core
         public JET_INDEXID Handle { get; private set; }
 
         #endregion
+
+        /// <summary> Creates index </summary>
+        internal static SearchIndex CreateSingleColumnIndex(Table table, string name, Column column)
+        {
+            var keyDescription = string.Format("+{0}\0\0", column.ColumnName);
+            Api.JetCreateIndex(table.CurrentSession, table, name, CreateIndexGrbit.IndexLazyFlush | CreateIndexGrbit.None,
+                keyDescription, keyDescription.Length, 100);
+
+            return new SearchIndex(table, name, column);
+        }
     }
 }

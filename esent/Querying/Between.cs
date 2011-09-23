@@ -12,7 +12,7 @@ namespace Meowth.Esentery.Querying
         where T : IComparable<T>
     {
         /// <summary> BETWEEN clause </summary>
-        public Between(SearchIndex<T> searchIndex, T valueFrom, bool inclusiveFrom, T valueTo, bool inclusiveTo)
+        public Between(ISearchIndex searchIndex, T valueFrom, bool inclusiveFrom, T valueTo, bool inclusiveTo)
         {
             SearchIndex = searchIndex;
             
@@ -62,7 +62,7 @@ namespace Meowth.Esentery.Querying
             return cursor;
         }
 
-        public SearchIndex<T> SearchIndex { get; private set; }
+        public ISearchIndex SearchIndex { get; private set; }
         public T ValueFrom { get; private set; }
         public bool InclusiveFrom { get; private set; }
         public T ValueTo { get; private set; }

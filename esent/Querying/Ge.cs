@@ -8,7 +8,7 @@ namespace Meowth.Esentery.Querying
         where T : IComparable<T>
     {
         /// <summary> GE clause </summary>
-        public Ge(SearchIndex<T> index, T val)
+        public Ge(ISearchIndex index, T val)
             : base(index, val)
         {
         }

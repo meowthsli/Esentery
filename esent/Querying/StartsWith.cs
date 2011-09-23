@@ -8,10 +8,10 @@ namespace Meowth.Esentery.Querying
     /// <summary> Finder by beginning of string </summary>
     public class StartsWith : Predicate
     {
-        internal SearchIndex<string> SearchIndex { get; private set; }
+        internal ISearchIndex SearchIndex { get; private set; }
         internal string Val { get; private set; }
 
-        public StartsWith(SearchIndex<string> searchIndex, string val)
+        public StartsWith(ISearchIndex searchIndex, string val)
         {
             SearchIndex = searchIndex;
             Val = val;

@@ -12,13 +12,12 @@ namespace Meowth.Esentery.Core
     /// <remarks> This cursor directly maps to ESENT internal cursor, so it reads data directly
     /// by iterating thru Index without calculations. Can be used as bookmark source for
     /// complex processing </remarks>
-    public sealed class NativeCursor<T> : HasJetHandleBase<JET_TABLEID>, ICursor, INativeCursor, IEnumerable<Bookmark>
-        where T : IComparable<T>
+    public sealed class NativeCursor : HasJetHandleBase<JET_TABLEID>, ICursor, INativeCursor, IEnumerable<Bookmark>
     {
         #region Construction & Disposing
 
         /// <summary> Opens existing table </summary>
-        internal NativeCursor(Table table, SearchIndex<T> searchIndex)
+        internal NativeCursor(Table table, ISearchIndex searchIndex)
         {
             Table = table;
             SearchIndex = searchIndex;
@@ -54,7 +53,7 @@ namespace Meowth.Esentery.Core
         public Table Table { get; private set; }
 
         /// <summary> Index reference on this </summary>
-        public SearchIndex<T> SearchIndex { get; private set; }
+        public ISearchIndex SearchIndex { get; private set; }
 
         /// <summary> Appends row </summary>
         public RowModification AddRow()
@@ -114,7 +113,8 @@ namespace Meowth.Esentery.Core
         #endregion
 
         /// <summary> Restricts range on equality of current </summary>
-        public void Restrict(Range<T> range)
+        public void Restrict<T>(Range<T> range)
+            where T :IComparable<T>
         {
             range.Normalize();
 

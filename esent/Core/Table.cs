@@ -12,19 +12,19 @@ namespace Meowth.Esentery.Core
     public class Table : HasJetHandleBase<JET_TABLEID>
     {
         /// <summary> Creates column </summary>
-        public Column<T> AddColumn<T>(string columnName, ColumnOptions options)
+        public Column AddColumn<T>(string columnName, ColumnOptions options)
         {
             JET_COLUMNID column;
 
             var typedOptions = options.OfType<T>();
             Api.JetAddColumn(CurrentSession, this, columnName, typedOptions.GetColumnDef(), null, 0, out column);
-            var newColumns = new Column<T>(this, columnName, typedOptions, column);
+            var newColumns = new Column(this, columnName, typedOptions, column);
             _columns.Add(newColumns);
             return newColumns;
         }
 
         /// <summary> Creates Index </summary>
-        public SearchIndex<T> AddSearchIndex<T>(string indexName, Column<T> column)
+        public SearchIndex AddSearchIndex(string indexName, Column column)
         {
             if (column.Table != this)
                 throw new ArgumentException("Column doesn't belong to this table");
@@ -32,7 +32,7 @@ namespace Meowth.Esentery.Core
             if(_indexes.Any(i => i.Column == column))
                 throw new ArgumentException("Index on specified column already exists");
 
-            var idx = SearchIndex<T>.CreateSingleColumnIndex(this, indexName, column);
+            var idx = SearchIndex.CreateSingleColumnIndex(this, indexName, column);
             _indexes.Add(idx);
             return idx;
         }
@@ -44,7 +44,7 @@ namespace Meowth.Esentery.Core
         }
 
         /// <summary> Returns index by name </summary>
-        public SearchIndex<T> GetIndex<T>(string indexName)
+        public SearchIndex GetIndex<T>(string indexName)
             where T : IComparable<T>
         {
             var index = _indexes.FirstOrDefault(i => i.Name == indexName);
@@ -55,7 +55,7 @@ namespace Meowth.Esentery.Core
                 throw new ArgumentException(string.Format("Index type differs from specified; expected '{0}', found '{1}'", 
                     typeof(T).Name, index.Column.ColumnType.Name));
 
-            return (SearchIndex<T>) index;
+            return (SearchIndex) index;
         }
         
         /// <summary> Returns copy of column list </summary>
@@ -109,10 +109,9 @@ namespace Meowth.Esentery.Core
         }
 
         /// <summary> Opens native cursor over this table </summary>
-        internal NativeCursor<T> OpenNativeCursor<T>(SearchIndex<T> searchIndex)
-            where T : IComparable<T>
+        internal NativeCursor OpenNativeCursor(ISearchIndex searchIndex)
         {
-            return new NativeCursor<T>(this, searchIndex);
+            return new NativeCursor(this, searchIndex);
         }
 
         /// <summary> Returns column id </summary>
@@ -137,13 +136,14 @@ namespace Meowth.Esentery.Core
             foreach(var c in Api.GetTableColumns(CurrentSession, this))
             {
                 var ops = ColumnOptions.From(c);
-                var type = typeof (Column<>).MakeGenericType(ops.ColumnType);
+                var cc = new Column(this, c.Name, ops, c.Columnid);
+                //var type = typeof (Column).MakeGenericType(ops.ColumnType);
                 
                 // TODO: refactor this code
-                var cc = (Column)Activator.CreateInstance(type, 
-                    BindingFlags.Instance | BindingFlags.NonPublic, null,
-                    new object[] {this, c.Name, ops, c.Columnid},
-                    CultureInfo.CurrentCulture);
+                //var cc = (Column)Activator.CreateInstance(type, 
+                //    BindingFlags.Instance | BindingFlags.NonPublic, null,
+                //    new object[] {this, c.Name, ops, c.Columnid},
+                //    CultureInfo.CurrentCulture);
                 
                 _columns.Add(cc);
             }
@@ -154,16 +154,17 @@ namespace Meowth.Esentery.Core
         {
             foreach (var idx in Api.GetTableIndexes(CurrentSession, this))
             {
-                var type = typeof(SearchIndex<>).MakeGenericType(
-                    Converters.GetClrType(idx.IndexSegments[0].Coltyp)
-                    );
+                //var type = typeof(SearchIndex<>).MakeGenericType(
+                //    Converters.GetClrType(idx.IndexSegments[0].Coltyp)
+                //    );
+                //// TODO: refactor this code
+                //var ix = (ISearchIndex)Activator.CreateInstance(type,
+                //    BindingFlags.Instance | BindingFlags.NonPublic, null,
+                //    new object[] { this, idx.Name, _columns.First(c => c.ColumnName == idx.IndexSegments[0].ColumnName) },
+                //    CultureInfo.CurrentCulture);
 
-                // TODO: refactor this code
-                var ix = (ISearchIndex)Activator.CreateInstance(type,
-                    BindingFlags.Instance | BindingFlags.NonPublic, null,
-                    new object[] { this, idx.Name, _columns.First(c => c.ColumnName == idx.IndexSegments[0].ColumnName) },
-                    CultureInfo.CurrentCulture);
-                
+                var ix = new SearchIndex(this, idx.Name,
+                    _columns.First(c => c.ColumnName == idx.IndexSegments[0].ColumnName));
                 _indexes.Add(ix);
             }
         }

@@ -7,7 +7,7 @@ namespace Meowth.Esentery.Extensions
     public static class CursorExtension
     {
         /// <summary> Appends row </summary>
-        public static void AddRow<T>(this NativeCursor<T> nativeReadonlyCursor, string[] columns, string[] values)
+        public static void AddRow<T>(this NativeCursor nativeReadonlyCursor, string[] columns, string[] values)
             where T : IComparable<T>
         {
             using (var insertion = nativeReadonlyCursor.AddRow())
@@ -22,7 +22,7 @@ namespace Meowth.Esentery.Extensions
         /// <summary> Opens Index by name </summary>
         public static ICursor OpenPrimaryCursor(this Table table)
         {
-            return table.OpenNativeCursor((SearchIndex<string>)null);
+            return table.OpenNativeCursor(null);
         }
     }
 }

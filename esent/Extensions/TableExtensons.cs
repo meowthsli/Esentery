@@ -8,13 +8,13 @@ namespace Meowth.Esentery.Extensions
     public static class TableExtensons
     {
         /// <summary> Returns typed column </summary>
-        public static Column<T> GetColumn<T>(this Table table, string name)
+        public static Column GetColumn<T>(this Table table, string name)
         {
             var c = GetColumn(table, name);
             if(c.ColumnType != typeof(T))
                 throw new ArgumentException("Column has another type");
 
-            return (Column<T>) c;
+            return c;
         }
 
         /// <summary> Removes all rows from table </summary>
@@ -48,12 +48,6 @@ namespace Meowth.Esentery.Extensions
                 throw new ArgumentException("There is too many search indices on given column");
 
             return indices.First();
-        }
-
-        /// <summary> Returns untyped index </summary>
-        public static SearchIndex<T> GetSearchIndexOfColumn<T>(this Table table, string columnName)
-        {
-            return (SearchIndex<T>) GetSearchIndexOfColumn(table, columnName);
         }
     }
 }
