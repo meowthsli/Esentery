@@ -25,9 +25,17 @@ namespace Meowth.Esentery.Core
         public void Save()
         {
             Api.JetUpdate(CurrentSession, Cursor);
+            Updated = true;
         }
         
-        public void Dispose() { }
+        public void Dispose()
+        {
+            if(!Updated)
+                Api.JetPrepareUpdate(CurrentSession, Cursor, JET_prep.Cancel);
+        }
+
+        /// <summary> Was it update? </summary>
+        protected bool Updated { get; set; }
 
         public Session CurrentSession { get { return Table.Database.CurrentSession; } }
 

@@ -7,6 +7,9 @@ namespace Meowth.Esentery.Core
     {
         /// <summary> Creates insert/update buffer </summary>
         RowModification AddRow();
+
+        /// <summary> Edits row </summary>
+        RowModification EditRow();
     }
 
     /// <summary> Access to row data (get set values by index

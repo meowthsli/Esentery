@@ -17,6 +17,7 @@ namespace Meowth.Esentery.Core
         #region Construction & Disposing
 
         /// <summary> Opens existing table </summary>
+        /// <param name="searchIndex">Can be null</param>
         internal NativeCursor(Table table, ISearchIndex searchIndex)
         {
             Table = table;
@@ -60,12 +61,11 @@ namespace Meowth.Esentery.Core
         {
             return new RowModification(Table, this, JET_prep.Insert);
         }
-        
-        /// <summary> Returns string value </summary>
-        public string GetString(string columnName)
+
+        /// <summary> Edits row </summary>
+        public RowModification EditRow()
         {
-            var colId = Api.GetColumnDictionary(CurrentSession, this)[columnName];
-            return Api.RetrieveColumnAsString(CurrentSession, this, colId, Encoding.Unicode);
+            return new RowModification(Table, this, JET_prep.Replace);
         }
 
         /// <summary> Moved to next record </summary>

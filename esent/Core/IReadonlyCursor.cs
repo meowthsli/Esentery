@@ -7,8 +7,5 @@ namespace Meowth.Esentery.Core
     {
         /// <summary> Moves to next record </summary>
         bool MoveNext();
-
-        /// <summary> Returns value </summary>
-        string GetString(string fieldName);
     }
 }

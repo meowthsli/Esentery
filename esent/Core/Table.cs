@@ -109,6 +109,7 @@ namespace Meowth.Esentery.Core
         }
 
         /// <summary> Opens native cursor over this table </summary>
+        /// <param name="searchIndex">Can be null</param>
         internal NativeCursor OpenNativeCursor(ISearchIndex searchIndex)
         {
             return new NativeCursor(this, searchIndex);
@@ -137,13 +138,6 @@ namespace Meowth.Esentery.Core
             {
                 var ops = ColumnOptions.From(c);
                 var cc = new Column(this, c.Name, ops, c.Columnid);
-                //var type = typeof (Column).MakeGenericType(ops.ColumnType);
-                
-                // TODO: refactor this code
-                //var cc = (Column)Activator.CreateInstance(type, 
-                //    BindingFlags.Instance | BindingFlags.NonPublic, null,
-                //    new object[] {this, c.Name, ops, c.Columnid},
-                //    CultureInfo.CurrentCulture);
                 
                 _columns.Add(cc);
             }
@@ -154,15 +148,6 @@ namespace Meowth.Esentery.Core
         {
             foreach (var idx in Api.GetTableIndexes(CurrentSession, this))
             {
-                //var type = typeof(SearchIndex<>).MakeGenericType(
-                //    Converters.GetClrType(idx.IndexSegments[0].Coltyp)
-                //    );
-                //// TODO: refactor this code
-                //var ix = (ISearchIndex)Activator.CreateInstance(type,
-                //    BindingFlags.Instance | BindingFlags.NonPublic, null,
-                //    new object[] { this, idx.Name, _columns.First(c => c.ColumnName == idx.IndexSegments[0].ColumnName) },
-                //    CultureInfo.CurrentCulture);
-
                 var ix = new SearchIndex(this, idx.Name,
                     _columns.First(c => c.ColumnName == idx.IndexSegments[0].ColumnName));
                 _indexes.Add(ix);

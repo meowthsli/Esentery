@@ -156,6 +156,20 @@ namespace Meowth.Esentery.Test
 
                 using (var cursor = table.OpenCursor(pf.Le(COLUMN4, 3)))
                     AssertRC(1, cursor, "Find column4 < 3");
+
+                using (var cursor = table.OpenCursor(pf.Le(COLUMN4, 3)))
+                {
+                    cursor.MoveNext();
+
+                    using (var upd = cursor.EditRow())
+                    {
+                        upd.SetValue(table.GetColumn<int>(COLUMN4), 6);
+                        upd.Save();
+                    }
+
+                }
+                using (var c2 = table.OpenCursor(pf.Le(COLUMN4, 3)))
+                    AssertRC(0, c2, "Find column4 < 3");
             }
 
             Console.WriteLine("---");

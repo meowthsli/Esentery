@@ -24,15 +24,16 @@ namespace Meowth.Esentery.Core
             return res;
         }
 
-        public string GetString(string columnName)
-        {
-            var colId = Api.GetColumnDictionary(CurrentSession, this)[columnName];
-            return Api.RetrieveColumnAsString(CurrentSession, this, colId, Encoding.Unicode);
-        }
-
+        /// <summary> Appends new row </summary>
         public RowModification AddRow()
         {
             return new RowModification(Table, this, JET_prep.Insert);
+        }
+
+        /// <summary> Edits row </summary>
+        public RowModification EditRow()
+        {
+            return new RowModification(Table, this, JET_prep.Replace);
         }
 
         /// <summary> Create from bookmark sequence </summary>
