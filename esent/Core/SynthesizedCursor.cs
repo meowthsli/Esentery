@@ -36,6 +36,12 @@ namespace Meowth.Esentery.Core
             return new RowModification(Table, this, JET_prep.Replace);
         }
 
+        /// <summary> Removes current row </summary>
+        public void DeleteRow()
+        {
+            Api.JetDelete(CurrentSession, this);
+        }
+
         /// <summary> Create from bookmark sequence </summary>
         internal SynthesizedCursor(IEnumerable<Bookmark> bookmarkGenerator, Table table)
         {

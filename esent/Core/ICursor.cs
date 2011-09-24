@@ -10,6 +10,9 @@ namespace Meowth.Esentery.Core
 
         /// <summary> Edits row </summary>
         RowModification EditRow();
+
+        /// <summary> Removes row </summary>
+        void DeleteRow();
     }
 
     /// <summary> Access to row data (get set values by index

@@ -110,6 +110,12 @@ namespace Meowth.Esentery.Core
             Api.JetMakeKey(CurrentSession, this, ms.Data, ms.Data.Length, MakeKeyGrbit.NormalizedKey);
         }
 
+        /// <summary> Removes current row </summary>
+        public void DeleteRow()
+        {
+            Api.JetDelete(CurrentSession, this);
+        }
+
         #endregion
 
         /// <summary> Restricts range on equality of current </summary>
