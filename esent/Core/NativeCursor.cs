@@ -116,6 +116,19 @@ namespace Meowth.Esentery.Core
             Api.JetDelete(CurrentSession, this);
         }
 
+        /// <summary> Returns value at column </summary>
+        public object GetValue(Column column)
+        {
+            return Converters.GetGetter(column.ColumnType)
+                (CurrentSession, this, column);
+        }
+
+        /// <summary> Returns stream at column </summary>
+        public ColumnStream OpenStream(Column column)
+        {
+            return new ColumnStream(CurrentSession, this, column);
+        }
+
         #endregion
 
         /// <summary> Restricts range on equality of current </summary>

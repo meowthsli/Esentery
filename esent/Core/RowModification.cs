@@ -46,6 +46,12 @@ namespace Meowth.Esentery.Core
                 (CurrentSession, Cursor, column);
         }
 
+        /// <summary> Returns stream at column </summary>
+        public ColumnStream OpenStream(Column column)
+        {
+            return new ColumnStream(CurrentSession, Cursor, column);
+        }
+
         /// <summary> Sets new value </summary>
         public void SetValue(Column column, object value)
         {

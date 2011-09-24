@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Isam.Esent.Interop;
 
 namespace Meowth.Esentery.Core
 {
@@ -13,6 +14,15 @@ namespace Meowth.Esentery.Core
 
         /// <summary> Removes row </summary>
         void DeleteRow();
+
+        /// <summary> Returns value at column </summary>
+        object GetValue(Column column);
+
+        /// <summary> Returns stream at column </summary>
+        ColumnStream OpenStream(Column column);
+
+        /// <summary> Cursor's table </summary>
+        Table Table { get; }
     }
 
     /// <summary> Access to row data (get set values by index
@@ -24,5 +34,8 @@ namespace Meowth.Esentery.Core
 
         /// <summary> Sets new value </summary>
         void SetValue(Column column, object value);
+
+        /// <summary> Returns stream at column </summary>
+        ColumnStream OpenStream(Column column);
     }
 }

@@ -66,6 +66,19 @@ namespace Meowth.Esentery.Core
             }
         }
 
+        /// <summary> Returns stream at column </summary>
+        public ColumnStream OpenStream(Column column)
+        {
+            return new ColumnStream(CurrentSession, this, column);
+        }
+
+        /// <summary> Returns value at column </summary>
+        public object GetValue(Column column)
+        {
+            return Converters.GetGetter(column.ColumnType)
+                (CurrentSession, this, column);
+        }
+
         private IEnumerator<Bookmark> BookmarkGenerator { get; set; }
     }
 }

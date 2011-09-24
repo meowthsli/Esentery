@@ -24,5 +24,11 @@ namespace Meowth.Esentery.Extensions
         {
             return table.OpenNativeCursor(null);
         }
+
+        /// <summary> Returns value of column </summary>
+        public static object GetValue(this ICursor cursor, string columnName)
+        {
+            return cursor.GetValue(cursor.Table.GetColumn(columnName));
+        }
     }
 }
