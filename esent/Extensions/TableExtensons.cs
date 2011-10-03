@@ -49,5 +49,23 @@ namespace Meowth.Esentery.Extensions
 
             return indices.First();
         }
+
+        /// <summary> Counts records on table </summary>
+        public static long GetRecordCount(this Table table)
+        {
+            var count = 0;
+            using (var cursor = table.OpenPrimaryCursor())
+                while (cursor.MoveNext())
+                    count++;
+
+            return count;
+        }
+
+        /// <summary> Check is any records presents </summary>
+        public static bool HasRecords(this Table table)
+        {
+            using (var cursor = table.OpenPrimaryCursor())
+                return cursor.MoveNext();
+        }
     }
 }
