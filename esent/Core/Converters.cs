@@ -200,6 +200,13 @@ namespace Meowth.Esentery.Core
                           (sess, table, column) => Api.RetrieveColumn(sess, table, column),
                           (sess, table, column, value) => Api.SetColumn(sess, table, column, (byte[]) value))
                           },
+
+                    {
+                          typeof (Guid),
+                          new ColumnValueAccessor(
+                          (sess, table, column) => Api.RetrieveColumnAsGuid(sess, table, column),
+                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (Guid) value))
+                          },
                   };
         
         /// <summary> Returns suitable converter </summary>
@@ -280,6 +287,8 @@ namespace Meowth.Esentery.Core
 
                       { typeof(long), VistaColtyp.LongLong },
                       { typeof(byte), JET_coltyp.UnsignedByte },
+
+                      {typeof(Guid), VistaColtyp.GUID},
                       
                       //{ typeof(byte[]), JET_coltyp.LongBinary },
                       //{ typeof(string), JET_coltyp.LongText },

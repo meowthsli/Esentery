@@ -1,6 +1,9 @@
 using System;
 using Meowth.Esentery.Core;
 using System.Linq;
+using Microsoft.Isam.Esent.Interop;
+using Table = Meowth.Esentery.Core.Table;
+
 namespace Meowth.Esentery.Extensions
 {
     /// <summary> Extensions </summary>
@@ -29,6 +32,12 @@ namespace Meowth.Esentery.Extensions
         public static object GetValue(this ICursor cursor, string columnName)
         {
             return cursor.GetValue(cursor.Table.GetColumn(columnName));
+        }
+
+        /// <summary> Opens cursor </summary>
+        public static ColumnStream OpenStream(this ICursor cursor, string columnName)
+        {
+            return cursor.OpenStream(cursor.Table.GetColumn(columnName));
         }
     }
 }
