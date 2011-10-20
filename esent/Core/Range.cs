@@ -4,7 +4,7 @@ namespace Meowth.Esentery.Core
 {
     /// <summary> Effective range for the restriction </summary>
     public sealed class Range<T>
-        where T : IComparable<T>
+        //where T : IComparable<T>
     {
         public T From
         {

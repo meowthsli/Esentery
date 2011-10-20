@@ -18,7 +18,7 @@ namespace Meowth.Esentery.Extensions
 
         /// <summary> = </summary>
         public Eq<T> Eq<T>(string columnName, T val)
-            where T : IComparable<T>
+            //where T : IComparable<T>
         {
             var index = Table.GetSearchIndexOfColumn(columnName);
             return new Eq<T>(index, val);

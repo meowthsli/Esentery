@@ -8,7 +8,7 @@ namespace Meowth.Esentery.Querying
     /// <summary> Finder by string equality </summary>
     /// <remarks> Implements simple scheme, with natural cursor</remarks>
     public class Eq<T> : RangePredicate<T>
-        where T : IComparable<T>
+        //where T : IComparable<T>
     {
         /// <summary> EQ clause </summary>
         public Eq(ISearchIndex searchIndex, T val)

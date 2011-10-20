@@ -23,6 +23,17 @@ namespace Meowth.Esentery.Core
             return newColumns;
         }
 
+        /// <summary> Creates column </summary>
+        public Column AddColumn(string columnName, ColumnOptions options)
+        {
+            JET_COLUMNID column;
+
+            Api.JetAddColumn(CurrentSession, this, columnName, options.GetColumnDef(), null, 0, out column);
+            var newColumns = new Column(this, columnName, options, column);
+            _columns.Add(newColumns);
+            return newColumns;
+        }
+
         /// <summary> Creates Index </summary>
         public SearchIndex AddSearchIndex(string indexName, Column column)
         {

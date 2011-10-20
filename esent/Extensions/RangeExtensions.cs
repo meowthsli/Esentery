@@ -8,14 +8,16 @@ namespace Meowth.Esentery.Extensions
     {
         /// <summary> Checks whether this range normal or not </summary>
         public static bool IsNormal<T>(this Range<T> range)
-            where T : IComparable<T>
+            //where T : IComparable<T>
         {
-            return range.From.CompareTo(range.To) <= 0;
+            if(typeof(IComparable<T>).IsAssignableFrom(typeof(T)) )
+                return ((IComparable<T>)range.From).CompareTo(range.To) <= 0;
+            return true;
         }
 
         /// <summary> Normalizes ranges </summary>
         public static void Normalize<T>(this Range<T> range)
-            where T : IComparable<T>
+            //where T : IComparable<T>
         {
             if(!range.IsNormal())
             {

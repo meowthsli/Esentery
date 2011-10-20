@@ -5,7 +5,7 @@ using Meowth.Esentery.Core;
 namespace Meowth.Esentery.Querying
 {
     /// <summary> LE finder </summary>
-    public abstract class RangePredicate<T> : Predicate where T : IComparable<T>
+    public abstract class RangePredicate<T> : Predicate// where T : IComparable<T>
     {
         /// <summary> LE clause </summary>
         protected RangePredicate(ISearchIndex searchIndex, T val)

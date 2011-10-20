@@ -133,7 +133,7 @@ namespace Meowth.Esentery.Core
 
         /// <summary> Restricts range on equality of current </summary>
         public void Restrict<T>(Range<T> range)
-            where T :IComparable<T>
+            //where T :IComparable<T>
         {
             range.Normalize();
 

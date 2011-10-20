@@ -89,7 +89,10 @@ namespace Meowth.Esentery.Core
         /// <summary> Converts value to sequence of bytes </summary>
         public static byte[] Convert<T>(T value)
         {
-            return GetConverter(typeof (T))(value);
+            if(value == null)
+                return GetConverter(typeof(T))(value);
+
+            return GetConverter(value.GetType())(value);
         }
 
         /// <summary> Converts value to sequence of bytes </summary>
