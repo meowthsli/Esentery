@@ -139,18 +139,32 @@ namespace Meowth.Esentery.Core
 
             if (range.HasFrom & range.HasTo)
             {
+                var options = (range.InclusiveFrom ? SeekGrbit.SeekGE : SeekGrbit.SeekGT);
+                if(range.From is IEquatable<T>)
+                {
+                    if (((IEquatable<T>)range.From).Equals(range.To))
+                        options = SeekGrbit.SeekEQ;
+                }
+
+                if (range.From is IComparable<T>)
+                {
+                    if (((IComparable<T>)range.From).CompareTo(range.To) == 0)
+                        options = SeekGrbit.SeekEQ;
+                }
+
                 var keyFrom = Converters.Convert(range.From);
                 Api.JetMakeKey(CurrentSession, this, keyFrom, keyFrom.Length, MakeKeyGrbit.NewKey);
 
-                Api.TrySeek(CurrentSession, this, range.InclusiveFrom ? SeekGrbit.SeekGE : SeekGrbit.SeekGT);
+                var tsres = Api.TrySeek(CurrentSession, this, options);
 
                 var keyTo = Converters.Convert(range.To);
                 Api.JetMakeKey(CurrentSession, this, keyTo, keyTo.Length, MakeKeyGrbit.NewKey);
 
-                Api.TrySetIndexRange(CurrentSession, this,
-                                     range.InclusiveTo
-                                         ? SetIndexRangeGrbit.RangeUpperLimit | SetIndexRangeGrbit.RangeInclusive
-                                         : SetIndexRangeGrbit.RangeUpperLimit);
+                var res = Api.TrySetIndexRange(CurrentSession, this,
+                                                range.InclusiveTo
+                                                    ? SetIndexRangeGrbit.RangeUpperLimit |
+                                                        SetIndexRangeGrbit.RangeInclusive
+                                                    : SetIndexRangeGrbit.RangeUpperLimit);
             }
             else if(!range.HasTo)
             {

@@ -51,6 +51,7 @@ namespace Meowth.Esentery.Test
             const string COLUMN2 = "column2";
             const string COLUMN3 = "column3";
             const string COLUMN4 = "int_column";
+            const string COLUMN5 = "code";
 
             using (var tx = db.Session.BeginTransaction())
             using (var table = db.CreateTable(TABLE))
@@ -65,9 +66,14 @@ namespace Meowth.Esentery.Test
                     new ColumnOptions { Encoding = Encoding.Unicode, Length = 200 });
 
                 var col4 = table.AddColumn<int>(COLUMN4, new ColumnOptions { ColumnType = typeof(int), IsNullable = false});
+
+                var col5 = table.AddColumn<string>(COLUMN5,
+                    new ColumnOptions { Encoding = Encoding.Unicode, Length = 200 });
+
                 table.AddSearchIndex(COLUMN, col1);
                 table.AddSearchIndex(COLUMN2, col2);
                 table.AddSearchIndex(COLUMN4, col4);
+                table.AddSearchIndex(COLUMN5, col5);
 
                 tx.Commit();
             }
@@ -80,6 +86,9 @@ namespace Meowth.Esentery.Test
             const string COLUMN2 = "column2";
             const string COLUMN3 = "column3";
             const string COLUMN4 = "int_column";
+            const string COLUMN5 = "code";
+
+            const string msg = "ON222DT29102011T174217P0Z222";
 
             const string message2 = "выаыаваыва";
 
@@ -94,6 +103,7 @@ namespace Meowth.Esentery.Test
                 var column2 = table.GetColumn<string>(COLUMN2);
                 var column3 = table.GetColumn<string>(COLUMN3);
                 var column4 = table.GetColumn<int>(COLUMN4);
+                var column5 = table.GetColumn(COLUMN5);
 
                 using (var ins = cursor.AddRow())
                 {
@@ -101,6 +111,7 @@ namespace Meowth.Esentery.Test
                     ins.SetValue(column2, message2);
                     ins.SetValue(column3, msg3);
                     ins.SetValue(column4, 1);
+                    ins.SetValue(column5, msg);
                     ins.Save();
                 }
 
@@ -110,6 +121,7 @@ namespace Meowth.Esentery.Test
                     ins.SetValue(column2, message2);
                     ins.SetValue(column3, msg3);
                     ins.SetValue(column4, 4);
+                    ins.SetValue(column5, msg);
                     ins.Save();
                 }
 
@@ -170,6 +182,18 @@ namespace Meowth.Esentery.Test
                 }
                 using (var c2 = table.OpenCursor(pf.Le(COLUMN4, 3)))
                     AssertRC(0, c2, "Find column4 < 3");
+
+                using (var cursor = table.OpenCursor(pf.Eq(COLUMN5, msg)))
+                    AssertRC(2, cursor, "Find column5 = longMsg");
+
+                using (var cursor = table.OpenCursor(pf.Eq(COLUMN5, "ON222DT200102011T174244P0Z222")))
+                    AssertRC(0, cursor, "Find column5 = longMsg");
+
+                using (var cursor = table.OpenCursor(pf.Eq(COLUMN5, "O")))
+                    AssertRC(0, cursor, "Find column5 = longMsg2");
+
+                using (var cursor = table.OpenCursor(pf.Eq(COLUMN5, "4ON2")))
+                    AssertRC(0, cursor, "Find column5 = longMsg3");
             }
 
             Console.WriteLine("---");
