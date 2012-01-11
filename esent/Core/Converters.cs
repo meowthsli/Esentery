@@ -113,104 +113,111 @@ namespace Meowth.Esentery.Core
             return s_accessors[t].Setter;
         }
 
-        /// <summary> Access to column values </summary>
-        private static readonly Dictionary<Type, ColumnValueAccessor> s_accessors
-            = new Dictionary<Type, ColumnValueAccessor>
-                  {
-                      {
-                          typeof (int),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsInt32(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (int) value))
-                          },
+    	/// <summary> Access to column values </summary>
+    	private static readonly Dictionary<Type, ColumnValueAccessor> s_accessors
+    		= new Dictionary<Type, ColumnValueAccessor>
+    		  	{
+    		  		{
+    		  			typeof (int),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsInt32(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (int) value))
+    		  			},
 
-                      {
-                          typeof (uint),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsUInt32(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (uint) value))
-                          },
+    		  		{
+    		  			typeof (uint),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsUInt32(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (uint) value))
+    		  			},
 
-                      {
-                          typeof (short),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsInt16(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (short) value))
-                          },
+    		  		{
+    		  			typeof (short),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsInt16(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (short) value))
+    		  			},
 
-                      {
-                          typeof (ushort),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsUInt16(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (ushort) value))
-                          },
+    		  		{
+    		  			typeof (ushort),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsUInt16(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (ushort) value))
+    		  			},
 
-                      {
-                          typeof (byte),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsByte(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (byte) value))
-                          },
+    		  		{
+    		  			typeof (byte),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsByte(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (byte) value))
+    		  			},
 
-                      {
-                          typeof (long),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsInt64(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (long) value))
-                          },
-
-
-                      {
-                          typeof (double),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsDouble(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (double) value))
-                          },
-
-                      {
-                          typeof (float),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsFloat(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (float) value))
-                          },
+    		  		{
+    		  			typeof (long),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsInt64(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (long) value))
+    		  			},
 
 
-                      {
-                          typeof (string),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsString(sess, table, column, Encoding.Unicode),
-                          (sess, table, column, value) =>
-                          Api.SetColumn(sess, table, column, (string) value, Encoding.Unicode))
-                          },
+    		  		{
+    		  			typeof (double),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsDouble(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (double) value))
+    		  			},
 
-                      {
-                          typeof (ulong),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsUInt64(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (ulong) value))
-                          },
+    		  		{
+    		  			typeof (float),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsFloat(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (float) value))
+    		  			},
 
-                      {
-                          typeof (bool),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsBoolean(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (bool) value))
-                          },
 
-                      {
-                          typeof (byte[]),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumn(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (byte[]) value))
-                          },
+    		  		{
+    		  			typeof (string),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsString(sess, table, column, Encoding.Unicode),
+    		  			(sess, table, column, value) =>
+    		  			Api.SetColumn(sess, table, column, (string) value, Encoding.Unicode))
+    		  			},
 
-                    {
-                          typeof (Guid),
-                          new ColumnValueAccessor(
-                          (sess, table, column) => Api.RetrieveColumnAsGuid(sess, table, column),
-                          (sess, table, column, value) => Api.SetColumn(sess, table, column, (Guid) value))
-                          },
-                  };
+    		  		{
+    		  			typeof (ulong),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsUInt64(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (ulong) value))
+    		  			},
+
+    		  		{
+    		  			typeof (bool),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsBoolean(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (bool) value))
+    		  			},
+
+    		  		{
+    		  			typeof (byte[]),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumn(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (byte[]) value))
+    		  			},
+
+    		  		{
+    		  			typeof (Guid),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsGuid(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (Guid) value))
+    		  			},
+
+    		  		{
+    		  			typeof (DateTime),
+    		  			new ColumnValueAccessor(
+    		  			(sess, table, column) => Api.RetrieveColumnAsDateTime(sess, table, column),
+    		  			(sess, table, column, value) => Api.SetColumn(sess, table, column, (DateTime) value))
+    		  			},
+    		  	};
         
         /// <summary> Returns suitable converter </summary>
         private static Func<object, byte[]> GetConverter(Type t)

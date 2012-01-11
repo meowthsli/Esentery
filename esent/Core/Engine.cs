@@ -13,7 +13,18 @@ namespace Meowth.Esentery.Core
                 engineInstanceName = "default";
             
             Api.JetCreateInstance(out JetHandle, engineInstanceName);
-            Api.JetSetSystemParameter(this, JET_SESID.Nil, JET_param.CircularLog, 1, null);
+            Api.JetSetSystemParameter(this, JET_SESID.Nil, JET_param.CircularLog, options.CircularLog? 1: 0, null);
+			
+			if(options.MaxVerPages != null)
+				Api.JetSetSystemParameter(this, JET_SESID.Nil, JET_param.MaxVerPages, options.MaxVerPages.Value, null);
+			if (options.LogFileDirectory != null)
+				Api.JetSetSystemParameter(this, JET_SESID.Nil, JET_param.LogFilePath, 0, options.LogFileDirectory);
+			if (options.TempFileDirectory != null)
+				Api.JetSetSystemParameter(this, JET_SESID.Nil, JET_param.TempPath, 0, options.TempFileDirectory);
+			if (options.SystemDirectory != null)
+				Api.JetSetSystemParameter(this, JET_SESID.Nil, JET_param.SystemPath, 0, options.SystemDirectory);
+
+
             Api.JetInit(ref JetHandle);
         }
 
