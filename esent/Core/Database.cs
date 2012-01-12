@@ -58,14 +58,11 @@ namespace Meowth.Esentery.Core
         internal static Database Open(Session session, string pathToDatabase)
         {
             // TODO: analyse return code
-			var res = Api.JetAttachDatabase(session, pathToDatabase, AttachDatabaseGrbit.None);
-			if(res != JET_wrn.Success)
-				throw new InvalidOperationException("Can't attach database, error " + Enum.GetName(typeof(JET_wrn), res));
-			
+			Api.JetAttachDatabase(session, pathToDatabase, AttachDatabaseGrbit.None);
 			JET_DBID jetDbId;
-            res = Api.JetOpenDatabase(session, pathToDatabase, null, out jetDbId, OpenDatabaseGrbit.None);
-			if (res != JET_wrn.Success)
-				throw new InvalidOperationException("Can't open database, error " + Enum.GetName(typeof(JET_wrn), res));
+            var res = Api.JetOpenDatabase(session, pathToDatabase, null, out jetDbId, OpenDatabaseGrbit.None);
+			// if (res != JET_wrn.Success)
+			//	throw new InvalidOperationException("Can't open database, error " + Enum.GetName(typeof(JET_wrn), res));
             return new Database(session, pathToDatabase, jetDbId);
         }
 
